@@ -1,0 +1,567 @@
+---
+import Container from "../ui/Container.astro";
+import Eyebrow from "../ui/Eyebrow.astro";
+import { transformationPipeline } from "../../data/transformationPipeline";
+---
+
+<section class="pipeline" aria-labelledby="pipeline-title" data-pipeline data-active="win">
+  <Container>
+    <div class="pipeline-intro" data-reveal-group>
+      <div class="pipeline-marker" data-reveal>
+        <Eyebrow>04 / THE TRANSFORMATION PIPELINE</Eyebrow>
+      </div>
+      <div class="pipeline-intro-grid">
+        <h2 id="pipeline-title" data-reveal>
+          <span>From encounter </span>
+          <span>to influence.</span>
+        </h2>
+        <p data-reveal>
+          The pathway moves through evangelism and outreach, discipleship and spiritual formation, leadership development and ministry training, and deployment into ministry, missions, and societal influence.
+        </p>
+      </div>
+    </div>
+
+    <div class="pipeline-journey" data-reveal-group>
+      <div class="pipeline-controls" hidden data-pipeline-controls>
+        <div class="progress-track" aria-hidden="true"><span class="progress-fill"></span></div>
+        {transformationPipeline.map((stage) => (
+          <button
+            class="stage-tab"
+            type="button"
+            id={`pipeline-tab-${stage.id}`}
+            data-stage-tab={stage.id}
+          >
+            <span class="tab-number">{stage.number}</span>
+            <span class="tab-title">{stage.title}</span>
+          </button>
+        ))}
+      </div>
+
+      <div class="pipeline-panels">
+        {transformationPipeline.map((stage, index) => (
+          <article class="pipeline-panel" id={`pipeline-panel-${stage.id}`} data-stage-panel={stage.id}>
+            <div class="stage-head">
+              <p class="stage-index">{stage.number} / STAGE</p>
+              <h3 tabindex="-1">{stage.title}</h3>
+            </div>
+            <div class="stage-copy">
+              <p class="stage-subtitle">{stage.subtitle}</p>
+              <p class="stage-description">{stage.description}</p>
+              {index < transformationPipeline.length - 1 && (
+                <button class="stage-next" type="button" data-stage-next={index + 1}>
+                  NEXT: {transformationPipeline[index + 1].title} <span aria-hidden="true">→</span>
+                </button>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </Container>
+</section>
+
+<script>
+  const pipeline = document.querySelector<HTMLElement>("[data-pipeline]");
+  const controls = pipeline?.querySelector<HTMLElement>("[data-pipeline-controls]");
+  const tabs = [...(pipeline?.querySelectorAll<HTMLButtonElement>("[data-stage-tab]") ?? [])];
+  const panels = [...(pipeline?.querySelectorAll<HTMLElement>("[data-stage-panel]") ?? [])];
+
+  if (pipeline && controls && tabs.length === 4 && panels.length === tabs.length) {
+    const desktop = window.matchMedia("(min-width: 75rem)");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let active = 0;
+    let transitionTimer = 0;
+
+    const showStage = (index: number, focusTab = false) => {
+      window.clearTimeout(transitionTimer);
+      panels.forEach((panel, panelIndex) => {
+        panel.classList.remove("is-leaving");
+        panel.hidden = panelIndex !== index;
+      });
+      tabs.forEach((tab, tabIndex) => {
+        tab.setAttribute("aria-selected", String(tabIndex === index));
+        tab.tabIndex = tabIndex === index ? 0 : -1;
+      });
+      active = index;
+      pipeline.dataset.active = tabs[index].dataset.stageTab;
+      if (focusTab) tabs[index].focus();
+    };
+
+    const selectStage = (index: number, focusTab = false) => {
+      if (!desktop.matches || index === active) {
+        if (focusTab && desktop.matches) tabs[index].focus();
+        return;
+      }
+      window.clearTimeout(transitionTimer);
+      panels[active].classList.remove("is-leaving");
+      if (reducedMotion.matches) {
+        showStage(index, focusTab);
+        return;
+      }
+      if (focusTab) tabs[index].focus();
+      panels[active].classList.add("is-leaving");
+      transitionTimer = window.setTimeout(() => showStage(index), 140);
+    };
+
+    const syncMode = () => {
+      window.clearTimeout(transitionTimer);
+      panels.forEach((panel) => panel.classList.remove("is-leaving"));
+      if (desktop.matches) {
+        controls.hidden = false;
+        controls.setAttribute("role", "tablist");
+        controls.setAttribute("aria-label", "Transformation stages");
+        tabs.forEach((tab, index) => {
+          tab.setAttribute("role", "tab");
+          tab.setAttribute("aria-controls", panels[index].id);
+        });
+        panels.forEach((panel, index) => {
+          panel.setAttribute("role", "tabpanel");
+          panel.setAttribute("aria-labelledby", tabs[index].id);
+          panel.tabIndex = 0;
+        });
+        pipeline.classList.add("is-enhanced");
+        showStage(active);
+      } else {
+        if (controls.contains(document.activeElement)) {
+          panels[active].querySelector("h3")?.focus();
+        }
+        pipeline.classList.remove("is-enhanced");
+        controls.hidden = true;
+        controls.removeAttribute("role");
+        controls.removeAttribute("aria-label");
+        tabs.forEach((tab) => {
+          tab.removeAttribute("role");
+          tab.removeAttribute("aria-controls");
+          tab.removeAttribute("aria-selected");
+          tab.removeAttribute("tabindex");
+        });
+        panels.forEach((panel) => {
+          panel.hidden = false;
+          panel.removeAttribute("role");
+          panel.removeAttribute("aria-labelledby");
+          panel.removeAttribute("tabindex");
+        });
+      }
+    };
+
+    controls.addEventListener("click", (event) => {
+      if (!(event.target instanceof Element)) return;
+      const tab = event.target.closest<HTMLButtonElement>("[data-stage-tab]");
+      if (tab) selectStage(tabs.indexOf(tab));
+    });
+
+    controls.addEventListener("keydown", (event) => {
+      if (!(event.target instanceof HTMLButtonElement)) return;
+      const index = tabs.indexOf(event.target);
+      if (index < 0) return;
+      let next: number;
+      switch (event.key) {
+        case "ArrowRight": next = (index + 1) % tabs.length; break;
+        case "ArrowLeft": next = (index - 1 + tabs.length) % tabs.length; break;
+        case "Home": next = 0; break;
+        case "End": next = tabs.length - 1; break;
+        default: return;
+      }
+      event.preventDefault();
+      selectStage(next, true);
+    });
+
+    pipeline.addEventListener("click", (event) => {
+      if (!(event.target instanceof Element)) return;
+      const next = event.target.closest<HTMLButtonElement>("[data-stage-next]");
+      if (next) selectStage(Number(next.dataset.stageNext), true);
+    });
+
+    desktop.addEventListener("change", syncMode);
+    syncMode();
+  }
+</script>
+
+<style>
+  .pipeline {
+    --focus-color: var(--color-flame);
+    padding-block: clamp(6rem, 9vw, 10rem);
+    background: var(--color-charcoal);
+    color: var(--color-ivory);
+  }
+
+  .pipeline-marker {
+    margin-bottom: clamp(3rem, 5vw, 5rem);
+  }
+
+  .pipeline-marker :global(.eyebrow) {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    color: var(--color-ivory);
+  }
+
+  .pipeline-marker :global(.eyebrow)::before {
+    flex: none;
+    width: 1.5rem;
+    height: 1px;
+    background: var(--color-flame);
+    content: "";
+  }
+
+  .pipeline-intro-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: end;
+    column-gap: clamp(1rem, 2vw, 2rem);
+  }
+
+  h2 {
+    grid-column: 1 / span 7;
+    min-width: 0;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(3.75rem, 6vw, 6.5rem);
+    font-weight: 500;
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+    text-wrap: initial;
+  }
+
+  h2 span {
+    display: block;
+  }
+
+  .pipeline-intro-grid > p {
+    grid-column: 9 / span 4;
+    max-width: 34rem;
+    margin: 0 0 0.25rem;
+    color: color-mix(in srgb, var(--color-ivory) 85%, transparent);
+    font-size: clamp(1rem, 1.15vw, 1.125rem);
+    line-height: 1.75;
+  }
+
+  .pipeline-journey {
+    margin-top: clamp(5rem, 8vw, 8rem);
+  }
+
+  .pipeline-controls[hidden],
+  .pipeline-panel[hidden] {
+    display: none;
+  }
+
+  .pipeline-panels {
+    display: grid;
+  }
+
+  .pipeline-panel {
+    position: relative;
+    min-width: 0;
+    padding: 0 0 clamp(4rem, 7vw, 6rem) 3rem;
+  }
+
+  .pipeline-panel:last-child {
+    padding-bottom: 0;
+  }
+
+  .pipeline-panel::before {
+    position: absolute;
+    top: 0.32rem;
+    left: -0.3rem;
+    width: 0.62rem;
+    height: 0.62rem;
+    border-radius: 50%;
+    background: var(--color-flame);
+    content: "";
+  }
+
+  .pipeline-panel:not(:last-child)::after {
+    position: absolute;
+    top: 0.95rem;
+    bottom: 0.3rem;
+    left: 0;
+    width: 1px;
+    background: color-mix(in srgb, var(--color-paper) 26%, transparent);
+    content: "";
+  }
+
+  .stage-index,
+  .tab-number {
+    margin: 0;
+    color: var(--color-flame);
+    font-size: 0.7rem;
+    font-weight: 800;
+    line-height: 1.4;
+    letter-spacing: 0.16em;
+  }
+
+  h3 {
+    margin: 1.3rem 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(4.5rem, 12vw, 7rem);
+    font-weight: 500;
+    line-height: 0.85;
+    letter-spacing: -0.04em;
+  }
+
+  .stage-copy {
+    max-width: 38rem;
+    margin-top: 1.6rem;
+  }
+
+  .stage-subtitle {
+    margin: 0;
+    font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .stage-description {
+    margin: 1rem 0 0;
+    color: color-mix(in srgb, var(--color-ivory) 85%, transparent);
+    font-size: clamp(1rem, 1.15vw, 1.125rem);
+    line-height: 1.75;
+  }
+
+  .stage-next {
+    display: none;
+    align-items: center;
+    gap: 0.7rem;
+    min-height: 2.75rem;
+    margin-top: 2rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-ivory);
+    font-size: 0.73rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+  }
+
+  .stage-next:hover {
+    color: var(--color-flame);
+  }
+
+  .stage-next span {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .pipeline-intro [data-reveal],
+  .pipeline-journey {
+    transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .pipeline-intro.is-reveal-pending:not(.is-revealed) [data-reveal],
+  .pipeline-journey.is-reveal-pending:not(.is-revealed) {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  .pipeline-intro h2 {
+    transition-delay: 70ms;
+  }
+
+  .pipeline-intro-grid > p {
+    transition-delay: 140ms;
+  }
+
+  @media (min-width: 75rem) {
+    .pipeline.is-enhanced .pipeline-controls {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-bottom: clamp(3.25rem, 4.5vw, 4.75rem);
+    }
+
+    .progress-track,
+    .progress-fill {
+      position: absolute;
+      bottom: 0.31rem;
+      left: 0.31rem;
+      width: 75%;
+      height: 1px;
+    }
+
+    .progress-track {
+      background: color-mix(in srgb, var(--color-paper) 30%, transparent);
+      pointer-events: none;
+    }
+
+    .progress-fill {
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: var(--color-flame);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 440ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .pipeline[data-active="grow"] .progress-fill { transform: scaleX(0.3333); }
+    .pipeline[data-active="build"] .progress-fill { transform: scaleX(0.6667); }
+    .pipeline[data-active="send"] .progress-fill { transform: scaleX(1); }
+
+    .stage-tab {
+      position: relative;
+      display: grid;
+      align-content: start;
+      justify-items: start;
+      gap: 0.5rem;
+      min-width: 0;
+      min-height: 7.25rem;
+      padding: 0 1rem 1.75rem 0;
+      border: 0;
+      background: transparent;
+      color: color-mix(in srgb, var(--color-ivory) 65%, transparent);
+      text-align: left;
+      cursor: pointer;
+      transition: color 220ms ease;
+    }
+
+    .stage-tab::after {
+      position: absolute;
+      z-index: 1;
+      bottom: 0;
+      left: 0;
+      width: 0.62rem;
+      height: 0.62rem;
+      border: 1px solid var(--color-paper);
+      border-radius: 50%;
+      background: var(--color-charcoal);
+      content: "";
+      transition: background-color 220ms ease, border-color 220ms ease;
+    }
+
+    .stage-tab[aria-selected="true"],
+    .stage-tab:hover {
+      color: var(--color-ivory);
+    }
+
+    .stage-tab[aria-selected="true"]::after {
+      border-color: var(--color-flame);
+      background: var(--color-flame);
+    }
+
+    .tab-number {
+      color: inherit;
+      font-size: 0.68rem;
+    }
+
+    .tab-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3vw, 2.65rem);
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: -0.025em;
+    }
+
+    .pipeline.is-enhanced .pipeline-panel {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      align-items: end;
+      column-gap: clamp(1rem, 2vw, 2rem);
+      min-height: 20rem;
+      padding: clamp(2.25rem, 4vw, 4rem) 0 0;
+      border-top: 1px solid color-mix(in srgb, var(--color-paper) 16%, transparent);
+      animation: stage-enter 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .pipeline.is-enhanced .pipeline-panel[hidden] {
+      display: none;
+    }
+
+    .pipeline.is-enhanced .pipeline-panel::before,
+    .pipeline.is-enhanced .pipeline-panel::after {
+      display: none;
+    }
+
+    .pipeline-panel.is-leaving {
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 140ms ease, transform 140ms ease;
+    }
+
+    .stage-head {
+      grid-column: 1 / span 7;
+    }
+
+    .pipeline.is-enhanced h3 {
+      font-size: clamp(6.5rem, 9vw, 8.5rem);
+    }
+
+    .stage-copy {
+      grid-column: 9 / span 4;
+      margin-top: 0;
+      padding-bottom: 0.4rem;
+    }
+
+    .pipeline.is-enhanced .stage-next {
+      display: inline-flex;
+    }
+  }
+
+  @keyframes stage-enter {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 74.999rem) {
+    .pipeline-intro-grid {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: clamp(2.5rem, 5vw, 4rem);
+    }
+
+    h2,
+    .pipeline-intro-grid > p {
+      grid-column: 1;
+    }
+
+    .pipeline-intro-grid > p {
+      margin-left: min(8vw, 7rem);
+    }
+  }
+
+  @media (max-width: 47.999rem) {
+    .pipeline {
+      padding-block: 6rem;
+    }
+
+    .pipeline-marker {
+      margin-bottom: 3rem;
+    }
+
+    h2 {
+      font-size: clamp(3.45rem, 12vw, 4.6rem);
+    }
+
+    .pipeline-intro-grid > p {
+      margin-left: 0;
+    }
+
+    .pipeline-journey {
+      margin-top: 5rem;
+    }
+
+    .pipeline-panel {
+      padding-left: 2rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pipeline-intro [data-reveal],
+    .pipeline-journey,
+    .progress-fill,
+    .stage-tab,
+    .stage-tab::after,
+    .pipeline-panel.is-leaving {
+      transition: none;
+    }
+
+    .pipeline.is-enhanced .pipeline-panel {
+      animation: none;
+    }
+
+    .pipeline-intro.is-reveal-pending:not(.is-revealed) [data-reveal],
+    .pipeline-journey.is-reveal-pending:not(.is-revealed) {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
