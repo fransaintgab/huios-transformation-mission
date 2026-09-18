@@ -1,0 +1,114 @@
+---
+import Container from "../ui/Container.astro";
+import { footerNavigation } from "../../data/navigation";
+---
+
+<footer class="site-footer">
+  <Container>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="/" aria-label="Huios Transformation Mission home">
+          <img src="/brand/huios-logo-white.png" width="3000" height="3000" alt="" loading="lazy" />
+          <span>HUIOS</span>
+        </a>
+        <p>Raising Mature Sons to Reveal Christ and Transform Nations.</p>
+      </div>
+
+      {footerNavigation.map((group) => (
+        <nav aria-label={`${group.title} links`}>
+          <h2>{group.title}</h2>
+          <ul>
+            {group.links.map((link) => (
+              <li><a href={link.href}>{link.label}</a></li>
+            ))}
+          </ul>
+        </nav>
+      ))}
+    </div>
+  </Container>
+</footer>
+
+<style>
+  .site-footer {
+    --focus-color: var(--color-flame);
+    --button-hover-color: var(--color-flame);
+    padding-block: clamp(4rem, 7vw, 7rem);
+    background: var(--color-charcoal);
+    color: var(--color-ivory);
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3rem 1.5rem;
+  }
+
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-decoration: none;
+  }
+
+  .brand img {
+    width: 5.5rem;
+    height: 5.5rem;
+    object-fit: contain;
+  }
+
+  .footer-brand p {
+    max-width: 23rem;
+    margin: 1rem 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 2.5vw, 2.25rem);
+    line-height: 1.15;
+  }
+
+  h2 {
+    margin: 0 0 1.25rem;
+    color: var(--color-flame);
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 800;
+    line-height: 1.4;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  ul {
+    display: grid;
+    gap: 0.85rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li a {
+    color: var(--color-ivory);
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+
+  li a:hover {
+    color: var(--color-flame);
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  @media (min-width: 50rem) {
+    .footer-grid {
+      grid-template-columns: minmax(15rem, 2fr) repeat(3, minmax(8rem, 1fr));
+      gap: clamp(2rem, 4vw, 5rem);
+    }
+
+    .footer-brand {
+      grid-column: auto;
+    }
+  }
+</style>

@@ -1,0 +1,98 @@
+---
+type Variant = "primary" | "secondary" | "text";
+type Tone = "default" | "light";
+
+interface Props {
+  href?: string;
+  variant?: Variant;
+  tone?: Tone;
+  type?: "button" | "submit" | "reset";
+  class?: string;
+  id?: string;
+}
+
+const {
+  href,
+  variant = "primary",
+  tone = "default",
+  type = "button",
+  class: className,
+  id,
+} = Astro.props;
+const classes = ["button", `button--${variant}`, `button--${tone}`, className];
+---
+
+{href ? (
+  <a href={href} id={id} class:list={classes}><slot /></a>
+) : (
+  <button type={type} id={id} class:list={classes}><slot /></button>
+)}
+
+<style>
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    min-height: 2.75rem;
+    padding: 0.65rem 1.15rem;
+    border: 1px solid transparent;
+    border-radius: 0.125rem;
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.055em;
+    text-decoration: none;
+    transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+    cursor: pointer;
+  }
+
+  .button--primary {
+    background: var(--color-ember);
+    color: var(--color-ink);
+  }
+
+  .button--primary:hover {
+    background: var(--color-flame);
+  }
+
+  .button--primary.button--light {
+    background: var(--color-ivory);
+    color: var(--color-ink);
+  }
+
+  .button--primary.button--light:hover {
+    background: var(--color-white);
+  }
+
+  .button--secondary {
+    border-color: currentColor;
+    background: transparent;
+    color: inherit;
+  }
+
+  .button--secondary:hover {
+    border-color: var(--button-hover-color, var(--color-earth));
+    color: var(--button-hover-color, var(--color-earth));
+  }
+
+  .button--text {
+    min-height: auto;
+    padding-inline: 0;
+    background: transparent;
+    color: inherit;
+    text-underline-offset: 0.28em;
+  }
+
+  .button--text:hover {
+    color: var(--button-hover-color, var(--color-earth));
+    text-decoration: underline;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .button {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,23 @@
+---
+interface Props {
+  as?: "p" | "span";
+  class?: string;
+}
+
+const { as: Tag = "p", class: className } = Astro.props as Props;
+---
+
+<Tag class:list={["eyebrow", className]}><slot /></Tag>
+
+<style>
+  .eyebrow {
+    margin: 0;
+    color: var(--color-earth);
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 800;
+    line-height: 1.4;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+</style>

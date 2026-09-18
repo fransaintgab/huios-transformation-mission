@@ -1,0 +1,347 @@
+---
+import Container from "../ui/Container.astro";
+import Button from "../ui/Button.astro";
+import { mediaLink, missionLink } from "../../data/navigation";
+
+interface HeroImage {
+  src: string;
+  srcSet?: string;
+  mobileSrcSet?: string;
+  avifSrcSet?: string;
+  webpSrcSet?: string;
+  sizes?: string;
+}
+
+interface Props {
+  image?: HeroImage;
+}
+
+const { image } = Astro.props;
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  {image ? (
+    <picture class="hero-media">
+      {image.mobileSrcSet && <source media="(max-width: 47.999rem)" srcset={image.mobileSrcSet} />}
+      {image.avifSrcSet && <source type="image/avif" srcset={image.avifSrcSet} sizes={image.sizes} />}
+      {image.webpSrcSet && <source type="image/webp" srcset={image.webpSrcSet} sizes={image.sizes} />}
+      <img
+        src={image.src}
+        srcset={image.srcSet}
+        sizes={image.sizes}
+        alt=""
+        fetchpriority="high"
+        decoding="async"
+      />
+    </picture>
+  ) : (
+    <div class="hero-placeholder" aria-hidden="true"></div>
+  )}
+  <div class="hero-shade" aria-hidden="true"></div>
+
+  <Container class="hero-container">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="hero-eyebrow"><span aria-hidden="true"></span>An Interdenominational Discipling Network</p>
+        <h1 id="hero-title">
+          <span>Raising Mature Sons </span>
+          <span>to Reveal Christ </span>
+          <span>and Transform Nations.</span>
+        </h1>
+        <p class="hero-description">
+          We exist to see believers transformed into the image of Christ through intentional discipleship, apostolic teaching, prayer, worship, leadership development, and kingdom deployment.
+        </p>
+        <div class="hero-actions">
+          <Button href={missionLink.href} tone="light">
+            JOIN THE MISSION <span class="action-arrow" aria-hidden="true">→</span>
+          </Button>
+          <Button href={mediaLink.href} variant="text">
+            WATCH MESSAGES <span class="action-arrow" aria-hidden="true">↗</span>
+          </Button>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-rail" aria-hidden="true">
+      <span><strong>01</strong><span class="rail-divider">/</span>HUIOS TRANSFORMATION MISSION</span>
+      <span class="rail-scroll">SCROLL TO DISCOVER <span class="rail-arrow">↓</span></span>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .hero {
+    --focus-color: var(--color-flame);
+    --button-hover-color: var(--color-flame);
+    position: relative;
+    isolation: isolate;
+    min-height: 100svh;
+    overflow: hidden;
+    background: var(--color-ink);
+    color: var(--color-ivory);
+  }
+
+  .hero-media,
+  .hero-placeholder,
+  .hero-shade {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+  }
+
+  .hero-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* Temporary atmosphere until a client-owned hero photograph is supplied. */
+  .hero-placeholder {
+    background:
+      radial-gradient(ellipse at 80% 45%, color-mix(in srgb, var(--color-burnt) 17%, transparent), transparent 52%),
+      linear-gradient(115deg, var(--color-ink) 8%, var(--color-charcoal) 58%, color-mix(in srgb, var(--color-charcoal) 88%, var(--color-burnt)) 100%);
+  }
+
+  .hero-shade {
+    background:
+      linear-gradient(90deg, color-mix(in srgb, var(--color-ink) 94%, transparent) 0%, color-mix(in srgb, var(--color-ink) 80%, transparent) 40%, color-mix(in srgb, var(--color-ink) 35%, transparent) 100%),
+      linear-gradient(0deg, color-mix(in srgb, var(--color-ink) 48%, transparent), transparent 20%, transparent 75%, color-mix(in srgb, var(--color-ink) 26%, transparent));
+  }
+
+  :global(.hero-container) {
+    position: relative;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    min-height: 100svh;
+    padding-top: clamp(8.5rem, 15vh, 12rem);
+    padding-bottom: clamp(2rem, 3vw, 3rem);
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: center;
+    padding-block: 2rem 3rem;
+  }
+
+  .hero-copy {
+    grid-column: 1 / span 9;
+    min-width: 0;
+  }
+
+  .hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin: 0 0 clamp(1.4rem, 3vh, 2.25rem);
+    color: var(--color-ivory);
+    font-size: 0.68rem;
+    font-weight: 800;
+    line-height: 1.45;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    animation: hero-enter 650ms cubic-bezier(0.22, 1, 0.36, 1) 70ms both;
+  }
+
+  .hero-eyebrow span {
+    flex: none;
+    width: 1.5rem;
+    height: 1px;
+    background: var(--color-flame);
+  }
+
+  h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(4.25rem, 7vw, 6.6rem);
+    font-weight: 500;
+    line-height: 0.9;
+    letter-spacing: -0.035em;
+    text-wrap: initial;
+    animation: hero-enter 700ms cubic-bezier(0.22, 1, 0.36, 1) 155ms both;
+  }
+
+  h1 span {
+    display: block;
+  }
+
+  .hero-description {
+    max-width: 39rem;
+    margin: clamp(1.75rem, 3.4vh, 2.7rem) 0 0;
+    color: color-mix(in srgb, var(--color-ivory) 82%, transparent);
+    font-size: clamp(0.93rem, 1.15vw, 1.06rem);
+    font-weight: 400;
+    line-height: 1.75;
+    animation: hero-enter 700ms cubic-bezier(0.22, 1, 0.36, 1) 245ms both;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem clamp(1.5rem, 2.5vw, 2.5rem);
+    margin-top: clamp(1.75rem, 3.8vh, 2.75rem);
+    animation: hero-enter 700ms cubic-bezier(0.22, 1, 0.36, 1) 335ms both;
+  }
+
+  .hero-actions :global(.button--primary) {
+    min-height: 3.15rem;
+    padding-inline: 1.35rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+  }
+
+  .hero-actions :global(.button--text) {
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+  }
+
+  .action-arrow {
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 0;
+    transition: transform 180ms ease;
+  }
+
+  .hero-actions :global(a:hover) .action-arrow,
+  .hero-actions :global(a:focus-visible) .action-arrow {
+    transform: translate(2px, -1px);
+  }
+
+  .hero-rail {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    color: color-mix(in srgb, var(--color-ivory) 78%, transparent);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.17em;
+    line-height: 1.5;
+    animation: hero-enter 650ms cubic-bezier(0.22, 1, 0.36, 1) 440ms both;
+  }
+
+  .hero-rail strong {
+    color: var(--color-ivory);
+    font-weight: 800;
+  }
+
+  .rail-divider {
+    margin-inline: 0.7rem;
+    color: var(--color-flame);
+  }
+
+  .rail-scroll {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .rail-arrow {
+    color: var(--color-flame);
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  @keyframes hero-enter {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (min-width: 75rem) {
+    .hero-copy {
+      grid-column: 1 / span 9;
+    }
+
+    .hero-rail {
+      display: flex;
+    }
+  }
+
+  @media (max-width: 74.999rem) {
+    .hero-copy {
+      grid-column: 1 / span 10;
+    }
+
+    h1 {
+      font-size: clamp(4rem, 8vw, 6.5rem);
+    }
+  }
+
+  @media (max-width: 47.999rem) {
+    .hero-shade {
+      background: linear-gradient(90deg, color-mix(in srgb, var(--color-ink) 91%, transparent), color-mix(in srgb, var(--color-ink) 67%, transparent));
+    }
+
+    :global(.hero-container) {
+      padding-top: clamp(8.25rem, 16vh, 10rem);
+      padding-bottom: 2.5rem;
+    }
+
+    .hero-grid {
+      padding-block: 1.5rem 2rem;
+    }
+
+    .hero-copy {
+      grid-column: 1 / -1;
+    }
+
+    .hero-eyebrow {
+      gap: 0.6rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.57rem;
+      letter-spacing: 0.12em;
+    }
+
+    .hero-eyebrow span {
+      width: 1rem;
+    }
+
+    h1 {
+      font-size: clamp(3.25rem, 9.5vw, 4.75rem);
+      line-height: 0.93;
+      letter-spacing: -0.035em;
+    }
+
+    .hero-description {
+      max-width: 34rem;
+      margin-top: 1.6rem;
+      font-size: 0.94rem;
+      line-height: 1.68;
+    }
+
+    .hero-actions {
+      gap: 1rem 1.5rem;
+      margin-top: 1.75rem;
+    }
+  }
+
+  @media (max-width: 25rem) {
+    .hero-actions {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-eyebrow,
+    h1,
+    .hero-description,
+    .hero-actions,
+    .hero-rail {
+      animation: none;
+    }
+
+    .action-arrow {
+      transition: none;
+    }
+  }
+</style>

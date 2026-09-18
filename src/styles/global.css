@@ -1,0 +1,117 @@
+@import "tailwindcss";
+
+:root {
+  --color-ink: #0B0A09;
+  --color-charcoal: #171411;
+  --color-ivory: #F6F1E8;
+  --color-paper: #ECE4D8;
+  --color-ember: #EF4918;
+  --color-burnt: #B75026;
+  --color-earth: #712313;
+  --color-flame: #F4C51D;
+  --color-white: #FFFFFF;
+  --color-text: #171411;
+  --color-text-muted: #736D65;
+  --color-border: rgba(23, 20, 17, 0.14);
+
+  --font-display: "Cormorant Garamond Variable", Georgia, "Times New Roman", serif;
+  --font-body: "Manrope Variable", "Segoe UI", Arial, sans-serif;
+  --content-width: 82rem;
+  --page-gutter: clamp(1.25rem, 4vw, 4.5rem);
+  --focus-color: var(--color-earth);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  text-size-adjust: 100%;
+}
+
+body {
+  min-width: 0;
+  margin: 0;
+  background: var(--color-ivory);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.menu-open {
+  overflow: hidden;
+}
+
+::selection {
+  background: var(--color-flame);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-color);
+  outline-offset: 4px;
+}
+
+img,
+picture,
+video,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 0.2em;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 100;
+  top: 0.75rem;
+  left: 0.75rem;
+  transform: translateY(-200%);
+  padding: 0.65rem 1rem;
+  background: var(--color-flame);
+  color: var(--color-ink);
+  font-weight: 700;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto;
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+  }
+}
