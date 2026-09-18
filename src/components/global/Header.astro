@@ -17,7 +17,9 @@ const { transparent = false } = Astro.props;
   <Container>
     <div class="header-inner">
       <a class="brand" href="/" aria-label="Huios Transformation Mission home">
-        <img src="/brand/huios-logo-white.png" width="3000" height="3000" alt="" />
+        <span class="brand-symbol" aria-hidden="true">
+          <img src="/brand/huios-logo-white.png" width="3000" height="3000" alt="" />
+        </span>
         <span class="brand-name">HUIOS<span>TRANSFORMATION MISSION</span></span>
       </a>
 
@@ -157,21 +159,28 @@ const { transparent = false } = Astro.props;
     display: inline-flex;
     flex: none;
     align-items: center;
-    gap: 0.05rem;
+    gap: 0.5rem;
     min-width: 0;
     text-decoration: none;
   }
 
-  .brand img {
-    width: 5.4rem;
-    height: 5.4rem;
-    object-fit: contain;
-    transition: width 220ms ease, height 220ms ease;
+  /* Display the supplied flame and book without its duplicate embedded wordmark. */
+  .brand-symbol {
+    position: relative;
+    display: block;
+    flex: none;
+    width: 4rem;
+    height: 2.75rem;
+    overflow: hidden;
   }
 
-  .is-scrolled .brand img {
-    width: 4.55rem;
-    height: 4.55rem;
+  .brand-symbol img {
+    position: absolute;
+    top: -1.2rem;
+    left: -1.33rem;
+    width: 6.67rem;
+    max-width: none;
+    height: auto;
   }
 
   .brand-name {
@@ -319,7 +328,7 @@ const { transparent = false } = Astro.props;
     .desktop-nav ul {
       display: flex;
       align-items: center;
-      gap: clamp(1.15rem, 1.6vw, 1.9rem);
+      gap: clamp(1.25rem, 1.9vw, 2.25rem);
     }
 
     .desktop-nav a {
@@ -371,6 +380,16 @@ const { transparent = false } = Astro.props;
     }
   }
 
+  @media (max-width: 74.999rem) {
+    .header-inner {
+      min-height: 4.25rem;
+    }
+
+    .is-scrolled .header-inner {
+      min-height: 4rem;
+    }
+  }
+
   @media (max-height: 42rem) {
     .mobile-menu-top {
       margin-bottom: 1.5rem;
@@ -389,7 +408,6 @@ const { transparent = false } = Astro.props;
   @media (prefers-reduced-motion: reduce) {
     .site-header,
     .header-inner,
-    .brand img,
     .desktop-nav a,
     .desktop-nav a::after,
     .mobile-menu nav a {

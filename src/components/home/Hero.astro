@@ -169,7 +169,7 @@ const { image } = Astro.props;
   .hero-description {
     max-width: 39rem;
     margin: clamp(1.75rem, 3.4vh, 2.7rem) 0 0;
-    color: color-mix(in srgb, var(--color-ivory) 82%, transparent);
+    color: color-mix(in srgb, var(--color-ivory) 88%, transparent);
     font-size: clamp(0.93rem, 1.15vw, 1.06rem);
     font-weight: 400;
     line-height: 1.75;
@@ -257,6 +257,10 @@ const { image } = Astro.props;
   }
 
   @media (min-width: 75rem) {
+    .hero-grid {
+      padding-bottom: clamp(7rem, 8.5vw, 8rem);
+    }
+
     .hero-copy {
       grid-column: 1 / span 9;
     }
@@ -282,12 +286,12 @@ const { image } = Astro.props;
     }
 
     :global(.hero-container) {
-      padding-top: clamp(8.25rem, 16vh, 10rem);
+      padding-top: clamp(4.75rem, 9svh, 6rem);
       padding-bottom: 2.5rem;
     }
 
     .hero-grid {
-      padding-block: 1.5rem 2rem;
+      padding-block: 1.5rem clamp(7rem, 14svh, 9rem);
     }
 
     .hero-copy {
@@ -319,6 +323,7 @@ const { image } = Astro.props;
     }
 
     .hero-actions {
+      flex-wrap: nowrap;
       gap: 1rem 1.5rem;
       margin-top: 1.75rem;
     }
