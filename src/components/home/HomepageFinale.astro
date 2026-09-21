@@ -1,0 +1,80 @@
+---
+import Container from "../ui/Container.astro";
+---
+
+<div class="homepage-finale">
+  <Container>
+    <div class="finale-content" data-reveal-group>
+      <p class="finale-descriptor" data-reveal>An Interdenominational Discipling Network</p>
+      <p class="finale-statement" data-reveal>Raising Mature Sons to Reveal Christ and Transform Nations</p>
+    </div>
+  </Container>
+</div>
+
+<style>
+  .homepage-finale {
+    padding-block: clamp(7.5rem, 11vw, 12rem);
+    background: var(--color-ink);
+    color: var(--color-ivory);
+  }
+
+  .finale-descriptor {
+    margin: 0 0 clamp(3rem, 5vw, 5rem);
+    color: color-mix(in srgb, var(--color-ivory) 82%, transparent);
+    font-size: 0.7rem;
+    font-weight: 800;
+    line-height: 1.4;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .finale-statement {
+    max-width: 18ch;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(4.5rem, 6.5vw, 8rem);
+    font-weight: 500;
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .finale-content [data-reveal] {
+    transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .finale-content.is-reveal-pending:not(.is-revealed) [data-reveal] {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  .finale-statement {
+    transition-delay: 80ms;
+  }
+
+  @media (max-width: 47.999rem) {
+    .homepage-finale {
+      padding-block: 6rem 7rem;
+    }
+
+    .finale-descriptor {
+      max-width: 21rem;
+      margin-bottom: 3rem;
+    }
+
+    .finale-statement {
+      font-size: clamp(2.75rem, 12vw, 3.1rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .finale-content [data-reveal] {
+      transition: none;
+    }
+
+    .finale-content.is-reveal-pending:not(.is-revealed) [data-reveal] {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
