@@ -1,6 +1,7 @@
 ---
 import Header from "../components/global/Header.astro";
 import Footer from "../components/global/Footer.astro";
+import DemoNotice from "../components/global/DemoNotice.astro";
 import "@fontsource-variable/cormorant-garamond/wght.css";
 import "@fontsource-variable/manrope/wght.css";
 import "../styles/global.css";
@@ -43,6 +44,7 @@ const canonical = canonicalProp ?? (Astro.site
       <slot />
     </main>
     <Footer />
+    <DemoNotice />
   </body>
 </html>
 

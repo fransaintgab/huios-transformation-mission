@@ -11,7 +11,10 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "dev:demo": "PUBLIC_DEMO=true astro dev",
+    "build:demo": "PUBLIC_DEMO=true astro build",
+    "demo:images": "python3 scripts/generate-demo-images.py"
   },
   "dependencies": {
     "@fontsource-variable/cormorant-garamond": "^5.3.0",

@@ -1,5 +1,7 @@
 ---
 import Container from "../ui/Container.astro";
+import { isDemo } from "../../config/demo";
+import { demoImages } from "../../data/demo";
 
 export interface PageChapter {
   readonly id: string;
@@ -18,10 +20,18 @@ interface Props {
 
 const { page, eyebrow = page, title, lead, chapters = [] } = Astro.props;
 const hasAside = Astro.slots.has("aside");
+// Background photography: demo imagery for previews until client photos exist.
+const background = isDemo ? demoImages.page : undefined;
 ---
 
 <section class:list={["page-hero", { "page-hero--aside": hasAside }]} aria-labelledby="page-title">
-  <div class="page-hero-atmosphere" aria-hidden="true"></div>
+  {background && (
+    <picture class="page-hero-media" aria-hidden="true">
+      <source type="image/webp" srcset={background.webp} />
+      <img src={background.src} alt="" fetchpriority="high" decoding="async" />
+    </picture>
+  )}
+  <div class:list={["page-hero-atmosphere", { "page-hero-atmosphere--over-image": background }]} aria-hidden="true"></div>
 
   <Container class="page-hero-container">
     <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -84,6 +94,25 @@ const hasAside = Astro.slots.has("aside");
     background:
       radial-gradient(ellipse at 88% 30%, color-mix(in srgb, var(--color-burnt) 16%, transparent), transparent 55%),
       linear-gradient(115deg, var(--color-ink) 20%, var(--color-charcoal) 70%, color-mix(in srgb, var(--color-charcoal) 90%, var(--color-burnt)) 100%);
+  }
+
+  .page-hero-media {
+    position: absolute;
+    z-index: -2;
+    inset: 0;
+  }
+
+  .page-hero-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 70% 40%;
+  }
+
+  .page-hero-atmosphere--over-image {
+    background:
+      linear-gradient(90deg, color-mix(in srgb, var(--color-ink) 94%, transparent) 0%, color-mix(in srgb, var(--color-ink) 72%, transparent) 50%, color-mix(in srgb, var(--color-ink) 40%, transparent) 100%),
+      linear-gradient(0deg, var(--color-ink), transparent 35%);
   }
 
   :global(.page-hero-container) {

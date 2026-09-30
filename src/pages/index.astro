@@ -12,6 +12,20 @@ import Media from "../components/home/Media.astro";
 import GetInvolved from "../components/home/GetInvolved.astro";
 import Contact from "../components/home/Contact.astro";
 import HomepageFinale from "../components/home/HomepageFinale.astro";
+import { isDemo } from "../config/demo";
+import { demoImages } from "../data/demo";
+
+const heroImage = isDemo
+  ? {
+      src: demoImages.hero.src,
+      webpSrcSet: demoImages.hero.webp,
+      mobileSrcSet: demoImages.heroMobile.webp,
+      sizes: "100vw",
+    }
+  : undefined;
+const whoImage = isDemo
+  ? { src: demoImages.gathering.src, webpSrcSet: demoImages.gathering.webp, alt: demoImages.gathering.alt }
+  : undefined;
 ---
 
 <BaseLayout
@@ -19,8 +33,8 @@ import HomepageFinale from "../components/home/HomepageFinale.astro";
   description="Huios Transformation Mission is an interdenominational discipling network raising mature sons to reveal Christ and transform nations."
   headerOverlay
 >
-  <Hero />
-  <WhoWeAre />
+  <Hero image={heroImage} />
+  <WhoWeAre image={whoImage} />
   <Philosophy />
   <TransformationPipeline />
   <VisionMission />

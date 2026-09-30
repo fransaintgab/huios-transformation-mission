@@ -3,6 +3,7 @@ import Container from "../ui/Container.astro";
 import Button from "../ui/Button.astro";
 import Eyebrow from "../ui/Eyebrow.astro";
 import { mediaCategories } from "../../data/media";
+import { slugify } from "../../utils/slugify";
 ---
 
 <section class="media" aria-labelledby="media-title">
@@ -36,7 +37,7 @@ import { mediaCategories } from "../../data/media";
       {mediaCategories.map((category) => (
         <li>
           <span class="category-number" aria-hidden="true">{category.number}</span>
-          <span class="category-name">{category.name}</span>
+          <a class="category-name" href={`/media/#${slugify(category.name)}`}>{category.name}</a>
         </li>
       ))}
     </ul>
@@ -52,6 +53,20 @@ import { mediaCategories } from "../../data/media";
 </section>
 
 <style>
+  /* Links to the matching section on the inner page; styled like the approved list items. */
+  a.category-name {
+    color: inherit;
+    text-decoration: none;
+    transition: color 180ms ease;
+  }
+
+  a.category-name:hover {
+    color: var(--color-earth);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.3em;
+  }
+
   .media {
     --button-hover-color: var(--color-earth);
     padding-block: clamp(6rem, 8.5vw, 9rem) clamp(7rem, 9vw, 10rem);

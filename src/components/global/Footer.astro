@@ -1,6 +1,8 @@
 ---
 import Container from "../ui/Container.astro";
 import { footerNavigation } from "../../data/navigation";
+
+const year = new Date().getFullYear();
 ---
 
 <footer class="site-footer">
@@ -24,6 +26,11 @@ import { footerNavigation } from "../../data/navigation";
           </ul>
         </nav>
       ))}
+    </div>
+
+    <div class="footer-base">
+      <p>© {year} Huios Transformation Mission</p>
+      <p>An Interdenominational Discipling Network</p>
     </div>
   </Container>
 </footer>
@@ -99,6 +106,23 @@ import { footerNavigation } from "../../data/navigation";
     color: var(--color-flame);
     text-decoration: underline;
     text-underline-offset: 0.25em;
+  }
+
+  .footer-base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+    margin-top: clamp(3.5rem, 6vw, 5.5rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid color-mix(in srgb, var(--color-ivory) 12%, transparent);
+    color: color-mix(in srgb, var(--color-ivory) 60%, transparent);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+  }
+
+  .footer-base p {
+    margin: 0;
   }
 
   @media (min-width: 50rem) {

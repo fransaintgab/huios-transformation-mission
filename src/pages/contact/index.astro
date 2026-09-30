@@ -6,12 +6,15 @@ import NextChapter from "../../components/page/NextChapter.astro";
 import type { NavigationLink } from "../../data/navigation";
 import { contactCategories, contactChannels } from "../../data/contact";
 import { slugify } from "../../utils/slugify";
+import { isDemo } from "../../config/demo";
+import { demoContactChannels } from "../../data/demo";
 
 const relatedLinks: Record<string, NavigationLink> = {
   "Partnership": { label: "Become a Ministry Partner", href: "/get-involved/#become-a-ministry-partner" },
   "Visit a Gathering": { label: "Major programs", href: "/programs/" },
   "Volunteer Registration": { label: "Become a Volunteer", href: "/get-involved/#become-a-volunteer" },
 };
+const channels = contactChannels.length > 0 ? contactChannels : isDemo ? demoContactChannels : [];
 const categories = contactCategories.map((category) => ({
   ...category,
   id: slugify(category.label),
@@ -45,9 +48,9 @@ const categories = contactCategories.map((category) => ({
       ))}
     </ul>
 
-    {contactChannels.length > 0 ? (
+    {channels.length > 0 ? (
       <dl class="channels" data-reveal-group>
-        {contactChannels.map((channel) => (
+        {channels.map((channel) => (
           <div data-reveal-item>
             <dt>{channel.label}</dt>
             <dd>{channel.href ? <a href={channel.href}>{channel.value}</a> : channel.value}</dd>

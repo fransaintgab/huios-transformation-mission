@@ -1,0 +1,37 @@
+---
+import { isDemo } from "../../config/demo";
+---
+
+{isDemo && (
+  <p class="demo-notice" role="note">
+    <span aria-hidden="true"></span>Preview with demo content
+  </p>
+)}
+
+<style>
+  .demo-notice {
+    position: fixed;
+    z-index: 30;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid color-mix(in srgb, var(--color-ivory) 18%, transparent);
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  .demo-notice span {
+    width: 0.45rem;
+    height: 0.45rem;
+    background: var(--color-flame);
+  }
+</style>

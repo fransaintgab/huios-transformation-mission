@@ -7,8 +7,15 @@ import Button from "../../components/ui/Button.astro";
 import { nextPageAfter } from "../../data/navigation";
 import { programs, type Program } from "../../data/programs";
 import { slugify } from "../../utils/slugify";
+import { isDemo } from "../../config/demo";
+import { demoImages, demoProgramSchedule } from "../../data/demo";
 
-const programList = programs.map((program: Program) => ({ ...program, id: slugify(program.name) }));
+const programList = programs.map((program: Program, index) => ({
+  ...program,
+  id: slugify(program.name),
+  image: isDemo ? demoImages.programs[index] : undefined,
+  schedule: isDemo ? demoProgramSchedule[program.name] : undefined,
+}));
 const next = nextPageAfter("/programs/");
 ---
 
@@ -35,7 +42,16 @@ const next = nextPageAfter("/programs/");
               <h3>{program.name}</h3>
               {program.rhythm && <p class="program-rhythm">{program.rhythm}</p>}
             </div>
-            <p class="program-description" data-reveal-item style="--reveal-order: 2">{program.description}</p>
+            <div class="program-body" data-reveal-item style="--reveal-order: 2">
+              {program.image && (
+                <picture class="program-image">
+                  <source type="image/webp" srcset={program.image.webp} />
+                  <img src={program.image.src} alt="" width="1200" height="800" loading="lazy" decoding="async" />
+                </picture>
+              )}
+              <p class="program-description">{program.description}</p>
+              {program.schedule && <p class="program-schedule">{program.schedule}</p>}
+            </div>
           </li>
         ))}
       </ol>
@@ -112,6 +128,29 @@ const next = nextPageAfter("/programs/");
     text-transform: uppercase;
   }
 
+  .program-image {
+    display: block;
+    margin-bottom: 1.75rem;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: var(--color-charcoal);
+  }
+
+  .program-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .program-schedule {
+    margin: 1.25rem 0 0;
+    color: var(--color-earth);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
   .program-description {
     max-width: 36rem;
     margin: 0;
@@ -174,7 +213,7 @@ const next = nextPageAfter("/programs/");
       grid-column: 3 / span 5;
     }
 
-    .program-description {
+    .program-body {
       grid-column: 8 / span 5;
       padding-top: 0.5rem;
     }

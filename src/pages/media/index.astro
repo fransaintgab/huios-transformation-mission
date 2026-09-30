@@ -6,9 +6,18 @@ import NextChapter from "../../components/page/NextChapter.astro";
 import { mediaCategories } from "../../data/media";
 import { nextPageAfter } from "../../data/navigation";
 import { slugify } from "../../utils/slugify";
+import { isDemo } from "../../config/demo";
+import { demoImages, demoMediaItems } from "../../data/demo";
 
 const categories = mediaCategories.map((category) => ({ ...category, id: slugify(category.name) }));
 const next = nextPageAfter("/media/");
+const latest = isDemo
+  ? demoMediaItems.map((item, index) => ({ ...item, image: demoImages.media[index] }))
+  : [];
+const chapters = [
+  ...(latest.length ? [{ id: "latest", label: "Latest" }] : []),
+  { id: "categories", label: "Media Categories" },
+];
 ---
 
 <BaseLayout
@@ -20,7 +29,7 @@ const next = nextPageAfter("/media/");
     page="Media"
     eyebrow="HUIOS TV"
     title={["Watch.", "Listen.", "Explore."]}
-    chapters={[{ id: "categories", label: "Media Categories" }]}
+    chapters={chapters}
   >
     <div slot="aside" class="tv-stage">
       <img
@@ -34,7 +43,28 @@ const next = nextPageAfter("/media/");
     </div>
   </PageHero>
 
-  <Chapter id="categories" number="01" label="Media Categories" title={["Watch, listen,", "and read."]}>
+  {latest.length > 0 && (
+    <Chapter id="latest" number="01" label="Latest" title={["Latest from", "HUIOS TV."]} tone="ink">
+      <ul class="latest-grid" data-reveal-group>
+        {latest.map((item, index) => (
+          <li data-reveal-item style={`--reveal-order: ${index}`}>
+            <article class="latest-item">
+              <picture class="latest-thumb">
+                <source type="image/webp" srcset={item.image.webp} />
+                <img src={item.image.src} alt="" width="960" height="540" loading="lazy" decoding="async" />
+                <span class="latest-play" aria-hidden="true">▶</span>
+              </picture>
+              <p class="latest-category">{item.category}</p>
+              <h3>{item.title}</h3>
+              <p class="latest-meta">{item.meta}</p>
+            </article>
+          </li>
+        ))}
+      </ul>
+    </Chapter>
+  )}
+
+  <Chapter id="categories" number={latest.length ? "02" : "01"} label="Media Categories" title={["Watch, listen,", "and read."]}>
     <ul class="category-grid" data-reveal-group>
       {categories.map((category, index) => (
         <li id={category.id} data-reveal-item style={`--reveal-order: ${index % 4}`}>
@@ -60,6 +90,76 @@ const next = nextPageAfter("/media/");
   .tv-stage img {
     width: 72%;
     height: auto;
+  }
+
+  .latest-grid {
+    display: grid;
+    gap: clamp(2.5rem, 4vw, 3.5rem) clamp(1.25rem, 2.5vw, 2.5rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .latest-thumb {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--color-charcoal);
+  }
+
+  .latest-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .latest-play {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    background: var(--color-ember);
+    color: var(--color-ink);
+    font-size: 0.8rem;
+  }
+
+  .latest-category {
+    margin: 1.25rem 0 0;
+    color: var(--color-flame);
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .latest-item h3 {
+    margin: 0.6rem 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 2.1vw, 2.1rem);
+    font-weight: 500;
+    line-height: 1.08;
+  }
+
+  .latest-meta {
+    margin: 0.6rem 0 0;
+    color: color-mix(in srgb, var(--color-ivory) 65%, transparent);
+    font-size: 0.8rem;
+  }
+
+  @media (min-width: 48rem) {
+    .latest-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 75rem) {
+    .latest-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
   }
 
   .category-grid {
