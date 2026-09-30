@@ -1,0 +1,397 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../../components/page/PageHero.astro";
+import Chapter from "../../components/page/Chapter.astro";
+import NextChapter from "../../components/page/NextChapter.astro";
+import Container from "../../components/ui/Container.astro";
+import { equipping, identity, philosophy, whoWeAre } from "../../data/about";
+import { visionMission } from "../../data/visionMission";
+import { nextPageAfter } from "../../data/navigation";
+
+const chapters = [
+  { id: "who-we-are", label: "Who We Are" },
+  { id: "philosophy", label: "Our Philosophy" },
+  { id: "vision", label: "Our Vision" },
+  { id: "mission", label: "Our Mission" },
+  { id: "equipping", label: "How We Equip" },
+] as const;
+const next = nextPageAfter("/about/");
+---
+
+<BaseLayout
+  title="About"
+  description="Huios Transformation Mission, formerly Apostolic Transformation Mission, is an interdenominational discipling network raising mature believers who accurately represent Christ in every generation."
+  headerOverlay
+>
+  <PageHero
+    page="About"
+    eyebrow="About Huios"
+    title={["More than a ministry.", "A discipling network."]}
+    lead={identity.network}
+    chapters={chapters}
+  />
+
+  <Chapter id="who-we-are" number="01" label="Who We Are" title={["Mature believers,", "every generation."]} layout="split">
+    <div class="who-body" data-reveal-group>
+      {whoWeAre.map((paragraph, index) => (
+        <p data-reveal-item style={`--reveal-order: ${index}`}>{paragraph}</p>
+      ))}
+    </div>
+
+    <dl class="identity-facts" data-reveal-group>
+      <div data-reveal-item>
+        <dt>Network</dt>
+        <dd>{identity.descriptor}</dd>
+      </div>
+      <div data-reveal-item style="--reveal-order: 1">
+        <dt>Formerly</dt>
+        <dd>{identity.formerName}</dd>
+      </div>
+      <div data-reveal-item style="--reveal-order: 2">
+        <dt>Statement</dt>
+        <dd>{identity.statement}</dd>
+      </div>
+    </dl>
+  </Chapter>
+
+  <section id="philosophy" class="philosophy" aria-labelledby="philosophy-title">
+    <Container>
+      <div class="philosophy-inner" data-reveal-group>
+        <p class="philosophy-marker" data-reveal-item><span aria-hidden="true"></span>02 / Our Philosophy</p>
+        <h2 id="philosophy-title" class="philosophy-statement" data-reveal-item style="--reveal-order: 1">
+          {philosophy.statement}
+        </h2>
+        <p class="philosophy-body" data-reveal-item style="--reveal-order: 2">{philosophy.body}</p>
+      </div>
+    </Container>
+  </section>
+
+  <section id="vision" class="vision" aria-labelledby="vision-title">
+    <Container>
+      <div class="vision-inner" data-reveal-group>
+        <p class="vision-marker" data-reveal-item>03 / Our Vision</p>
+        <h2 id="vision-title" class="sr-only">Our Vision</h2>
+        <blockquote class="vision-statement" data-reveal-item style="--reveal-order: 1">
+          <p>{visionMission.vision}</p>
+        </blockquote>
+      </div>
+    </Container>
+  </section>
+
+  <Chapter id="mission" number="04" label="Our Mission" title={["To disciple believers", "into spiritual maturity", "through:"]} tone="paper">
+    <ol class="pillars" data-reveal-group>
+      {visionMission.mission.pillars.map((pillar, index) => (
+        <li data-reveal-item style={`--reveal-order: ${index % 4}`}>
+          <span class="pillar-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+          <span class="pillar-label">{pillar}</span>
+        </li>
+      ))}
+    </ol>
+  </Chapter>
+
+  <Chapter id="equipping" number="05" label="How We Equip" title={["Equipped to", "influence."]} tone="charcoal">
+    <div class="equip-grid" data-reveal-group>
+      <div class="equip-column" data-reveal-item>
+        <h3>We equip believers through</h3>
+        <ul>
+          {equipping.means.map((means) => <li>{means}</li>)}
+        </ul>
+      </div>
+      <div class="equip-divider" aria-hidden="true" data-reveal-item style="--reveal-order: 1">
+        <span>→</span>
+      </div>
+      <div class="equip-column equip-column--spheres" data-reveal-item style="--reveal-order: 2">
+        <h3>To become mature sons who influence</h3>
+        <ul>
+          {equipping.spheres.map((sphere) => <li>{sphere}</li>)}
+        </ul>
+      </div>
+    </div>
+  </Chapter>
+
+  <NextChapter href={next.href} label={next.label} />
+</BaseLayout>
+
+<style>
+  .who-body {
+    max-width: 40rem;
+    font-size: clamp(1.05rem, 1.3vw, 1.2rem);
+    line-height: 1.8;
+  }
+
+  .who-body p {
+    margin: 0 0 1.5em;
+  }
+
+  .who-body p:first-child {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 2.2vw, 2.1rem);
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  .identity-facts {
+    display: grid;
+    margin: clamp(3rem, 5vw, 4.5rem) 0 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .identity-facts div {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    gap: 1rem;
+    padding-block: 1.15rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .identity-facts dt {
+    color: var(--color-earth);
+    font-size: 0.66rem;
+    font-weight: 800;
+    line-height: 2;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .identity-facts dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 1.6vw, 1.5rem);
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  /* Philosophy: the page's typographic climax. */
+  .philosophy {
+    --focus-color: var(--color-flame);
+    background: var(--color-ink);
+    color: var(--color-ivory);
+  }
+
+  .philosophy-inner {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: clamp(1rem, 2vw, 2rem);
+    min-height: 80svh;
+    align-content: space-between;
+    padding-block: clamp(6rem, 9vw, 10rem);
+  }
+
+  .philosophy-marker,
+  .vision-marker {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin: 0;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .philosophy-marker span {
+    flex: none;
+    width: 1.5rem;
+    height: 1px;
+    background: var(--color-flame);
+  }
+
+  .philosophy-statement {
+    grid-column: 1 / span 10;
+    margin: clamp(5rem, 9vw, 9rem) 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 9vw, 10rem);
+    font-weight: 500;
+    line-height: 0.86;
+    letter-spacing: -0.045em;
+  }
+
+  .philosophy-body {
+    grid-column: 7 / span 5;
+    max-width: 30rem;
+    margin: clamp(3rem, 5vw, 5rem) 0 0;
+    color: color-mix(in srgb, var(--color-ivory) 82%, transparent);
+    font-size: clamp(1rem, 1.2vw, 1.15rem);
+    line-height: 1.75;
+  }
+
+  /* Vision: one statement given the full measure of the page. */
+  .vision {
+    padding-block: clamp(6rem, 10vw, 11rem);
+    background: var(--color-ivory);
+    color: var(--color-ink);
+  }
+
+  .vision-marker {
+    color: var(--color-earth);
+  }
+
+  .vision-statement {
+    max-width: 68rem;
+    margin: clamp(3.5rem, 6vw, 6rem) 0 0;
+    padding-left: clamp(1.25rem, 3vw, 3rem);
+    border-left: 2px solid var(--color-ember);
+  }
+
+  .vision-statement p {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.35rem, 4.6vw, 5rem);
+    font-weight: 500;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+  }
+
+  .pillars {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .pillars li {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+    align-items: baseline;
+    gap: 1rem;
+    padding-block: clamp(1.4rem, 2vw, 2rem);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .pillar-number {
+    color: var(--color-earth);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+  }
+
+  .pillar-label {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 2.6vw, 2.6rem);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  .equip-grid {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .equip-column h3 {
+    margin: 0 0 1.5rem;
+    color: var(--color-flame);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .equip-column ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .equip-column li {
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 2.6vw, 2.5rem);
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .equip-column li:not(:last-child)::after {
+    margin-inline: 0.45em;
+    color: color-mix(in srgb, var(--color-ivory) 35%, transparent);
+    content: "/";
+  }
+
+  .equip-column--spheres li {
+    font-size: clamp(2.4rem, 4.2vw, 4.25rem);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+  }
+
+  .equip-divider {
+    color: var(--color-flame);
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .equip-divider span {
+    display: inline-block;
+    transform: rotate(90deg);
+  }
+
+  @media (min-width: 60rem) {
+    .pillars {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: clamp(3rem, 6vw, 7rem);
+    }
+  }
+
+  @media (min-width: 75rem) {
+    .equip-grid {
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.15fr);
+      gap: clamp(2rem, 4vw, 4.5rem);
+      align-items: start;
+    }
+
+    .equip-divider {
+      padding-top: 3.25rem;
+    }
+
+    .equip-divider span {
+      transform: none;
+    }
+
+    .equip-column--spheres ul {
+      flex-direction: column;
+    }
+
+    .equip-column--spheres li::after {
+      display: none;
+    }
+  }
+
+  @media (max-width: 74.999rem) {
+    .philosophy-statement,
+    .philosophy-body {
+      grid-column: 1 / -1;
+    }
+
+    .philosophy-body {
+      margin-left: auto;
+    }
+  }
+
+  @media (max-width: 47.999rem) {
+    .philosophy-inner {
+      min-height: 0;
+      padding-block: 5.5rem;
+    }
+
+    .philosophy-statement {
+      margin-top: 4rem;
+      font-size: clamp(3.1rem, 13.5vw, 4.5rem);
+      line-height: 0.9;
+    }
+
+    .philosophy-body {
+      margin-left: 0;
+      font-size: 1rem;
+    }
+
+    .identity-facts div {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.25rem;
+    }
+  }
+</style>

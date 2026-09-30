@@ -2,6 +2,7 @@
 import Container from "../ui/Container.astro";
 import Eyebrow from "../ui/Eyebrow.astro";
 import { participationPathways } from "../../data/getInvolved";
+import { slugify } from "../../utils/slugify";
 ---
 
 <section class="get-involved" aria-labelledby="get-involved-title">
@@ -20,7 +21,7 @@ import { participationPathways } from "../../data/getInvolved";
         {participationPathways.map((pathway) => (
           <li>
             <span class="pathway-number" aria-hidden="true">{pathway.number}</span>
-            <span class="pathway-label">{pathway.label}</span>
+            <a class="pathway-label" href={`/get-involved/#${slugify(pathway.label)}`}>{pathway.label}</a>
           </li>
         ))}
       </ul>
@@ -36,6 +37,20 @@ import { participationPathways } from "../../data/getInvolved";
 </section>
 
 <style>
+  /* Links to the matching section on the inner page; styled like the approved list items. */
+  a.pathway-label {
+    color: inherit;
+    text-decoration: none;
+    transition: color 180ms ease;
+  }
+
+  a.pathway-label:hover {
+    color: var(--color-flame);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.3em;
+  }
+
   .get-involved {
     --focus-color: var(--color-flame);
     padding-block: clamp(6rem, 8.5vw, 9rem) clamp(7rem, 9vw, 10rem);

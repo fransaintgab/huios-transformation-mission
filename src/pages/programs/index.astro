@@ -1,0 +1,225 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../../components/page/PageHero.astro";
+import NextChapter from "../../components/page/NextChapter.astro";
+import Container from "../../components/ui/Container.astro";
+import Button from "../../components/ui/Button.astro";
+import { nextPageAfter } from "../../data/navigation";
+import { programs, type Program } from "../../data/programs";
+import { slugify } from "../../utils/slugify";
+import { isDemo } from "../../config/demo";
+import { demoImages, demoProgramSchedule } from "../../data/demo";
+
+const programList = programs.map((program: Program, index) => ({
+  ...program,
+  id: slugify(program.name),
+  image: isDemo ? demoImages.programs[index] : undefined,
+  schedule: isDemo ? demoProgramSchedule[program.name] : undefined,
+}));
+const next = nextPageAfter("/programs/");
+---
+
+<BaseLayout
+  title="Programs"
+  description="The major programs of Huios Transformation Mission: the Annual and Mid-Year Retreats, Sons of Oil Conference, Singles Summit, Global Altar Project and Morphosis Encounter."
+  headerOverlay
+>
+  <PageHero
+    page="Programs"
+    eyebrow="Major Programs"
+    title={["Gatherings for", "transformation."]}
+    chapters={programList.map((program) => ({ id: program.id, label: program.name }))}
+  />
+
+  <section class="programs" aria-labelledby="programs-title">
+    <h2 id="programs-title" class="sr-only">Major Programs</h2>
+    <Container>
+      <ol class="program-list">
+        {programList.map((program) => (
+          <li id={program.id} class="program" data-reveal-group>
+            <span class="program-number" aria-hidden="true" data-reveal-item>{program.number}</span>
+            <div class="program-heading" data-reveal-item style="--reveal-order: 1">
+              <h3>{program.name}</h3>
+              {program.rhythm && <p class="program-rhythm">{program.rhythm}</p>}
+            </div>
+            <div class="program-body" data-reveal-item style="--reveal-order: 2">
+              {program.image && (
+                <picture class="program-image">
+                  <source type="image/webp" srcset={program.image.webp} />
+                  <img src={program.image.src} alt="" width="1200" height="800" loading="lazy" decoding="async" />
+                </picture>
+              )}
+              <p class="program-description">{program.description}</p>
+              {program.schedule && <p class="program-schedule">{program.schedule}</p>}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </Container>
+  </section>
+
+  <section class="attend" aria-labelledby="attend-title">
+    <Container>
+      <div class="attend-inner" data-reveal-group>
+        <h2 id="attend-title" data-reveal-item>Attend a gathering.</h2>
+        <div class="attend-actions" data-reveal-item style="--reveal-order: 1">
+          <Button href="/contact/#visit-a-gathering">VISIT A GATHERING <span aria-hidden="true">→</span></Button>
+          <Button href="/get-involved/#attend-conferences" variant="text">WAYS TO GET INVOLVED <span aria-hidden="true">→</span></Button>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <NextChapter href={next.href} label={next.label} />
+</BaseLayout>
+
+<style>
+  .programs {
+    padding-block: clamp(3rem, 6vw, 6rem) clamp(5rem, 8vw, 8rem);
+    background: var(--color-ivory);
+    color: var(--color-ink);
+  }
+
+  .program-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .program {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    padding-block: clamp(3rem, 5.5vw, 5.5rem);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .program:first-child {
+    padding-top: clamp(2rem, 3vw, 3rem);
+  }
+
+  .program-number {
+    color: var(--color-ember);
+    font-family: var(--font-display);
+    font-size: clamp(4rem, 7vw, 7.5rem);
+    font-weight: 500;
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+  }
+
+  .program-heading h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.7rem, 4.4vw, 4.75rem);
+    font-weight: 500;
+    line-height: 0.96;
+    letter-spacing: -0.03em;
+  }
+
+  .program-rhythm {
+    display: inline-block;
+    margin: 1.25rem 0 0;
+    padding: 0.35rem 0.65rem;
+    border: 1px solid var(--color-border);
+    color: var(--color-earth);
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .program-image {
+    display: block;
+    margin-bottom: 1.75rem;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: var(--color-charcoal);
+  }
+
+  .program-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .program-schedule {
+    margin: 1.25rem 0 0;
+    color: var(--color-earth);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .program-description {
+    max-width: 36rem;
+    margin: 0;
+    font-size: clamp(1rem, 1.2vw, 1.15rem);
+    line-height: 1.78;
+  }
+
+  .attend {
+    --focus-color: var(--color-flame);
+    --button-hover-color: var(--color-flame);
+    padding-block: clamp(5rem, 8vw, 8rem);
+    background: var(--color-charcoal);
+    color: var(--color-ivory);
+  }
+
+  .attend-inner {
+    display: grid;
+    gap: 2.5rem;
+    align-items: end;
+  }
+
+  .attend h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 6vw, 6.25rem);
+    font-weight: 500;
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+  }
+
+  .attend-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 2rem;
+  }
+
+  .attend-actions :global(.button) {
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+  }
+
+  .attend-actions :global(.button--primary) {
+    min-height: 3.15rem;
+    padding-inline: 1.35rem;
+  }
+
+  @media (min-width: 75rem) {
+    .program {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: clamp(1rem, 2vw, 2rem);
+      align-items: start;
+    }
+
+    .program-number {
+      grid-column: 1 / span 2;
+    }
+
+    .program-heading {
+      grid-column: 3 / span 5;
+    }
+
+    .program-body {
+      grid-column: 8 / span 5;
+      padding-top: 0.5rem;
+    }
+
+    .attend-inner {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+  }
+</style>

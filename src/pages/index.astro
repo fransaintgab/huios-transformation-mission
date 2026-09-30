@@ -12,6 +12,20 @@ import Media from "../components/home/Media.astro";
 import GetInvolved from "../components/home/GetInvolved.astro";
 import Contact from "../components/home/Contact.astro";
 import HomepageFinale from "../components/home/HomepageFinale.astro";
+import { isDemo } from "../config/demo";
+import { demoImages } from "../data/demo";
+
+const heroImage = isDemo
+  ? {
+      src: demoImages.hero.src,
+      webpSrcSet: demoImages.hero.webp,
+      mobileSrcSet: demoImages.heroMobile.webp,
+      sizes: "100vw",
+    }
+  : undefined;
+const whoImage = isDemo
+  ? { src: demoImages.gathering.src, webpSrcSet: demoImages.gathering.webp, alt: demoImages.gathering.alt }
+  : undefined;
 ---
 
 <BaseLayout
@@ -19,8 +33,8 @@ import HomepageFinale from "../components/home/HomepageFinale.astro";
   description="Huios Transformation Mission is an interdenominational discipling network raising mature sons to reveal Christ and transform nations."
   headerOverlay
 >
-  <Hero />
-  <WhoWeAre />
+  <Hero image={heroImage} />
+  <WhoWeAre image={whoImage} />
   <Philosophy />
   <TransformationPipeline />
   <VisionMission />
@@ -33,20 +47,3 @@ import HomepageFinale from "../components/home/HomepageFinale.astro";
   <HomepageFinale />
 </BaseLayout>
 
-<script>
-  if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    const observer = new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        entry.target.classList.add("is-revealed");
-        observer.unobserve(entry.target);
-      }
-    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.01 });
-
-    document.querySelectorAll<HTMLElement>("[data-reveal-group]").forEach((group) => {
-      if (group.getBoundingClientRect().top < window.innerHeight * 0.92) return;
-      group.classList.add("is-reveal-pending");
-      observer.observe(group);
-    });
-  }
-</script>

@@ -3,6 +3,7 @@ import Container from "../ui/Container.astro";
 import Button from "../ui/Button.astro";
 import Eyebrow from "../ui/Eyebrow.astro";
 import { contactCategories } from "../../data/contact";
+import { slugify } from "../../utils/slugify";
 ---
 
 <section class="contact" aria-labelledby="contact-title">
@@ -21,7 +22,7 @@ import { contactCategories } from "../../data/contact";
           {contactCategories.map((category) => (
             <li>
               <span class="contact-number" aria-hidden="true">{category.number}</span>
-              <span class="contact-label">{category.label}</span>
+              <a class="contact-label" href={`/contact/#${slugify(category.label)}`}>{category.label}</a>
             </li>
           ))}
         </ul>
@@ -39,6 +40,20 @@ import { contactCategories } from "../../data/contact";
 </section>
 
 <style>
+  /* Links to the matching section on the inner page; styled like the approved list items. */
+  a.contact-label {
+    color: inherit;
+    text-decoration: none;
+    transition: color 180ms ease;
+  }
+
+  a.contact-label:hover {
+    color: var(--color-earth);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.3em;
+  }
+
   .contact {
     --button-hover-color: var(--color-earth);
     padding-block: clamp(6rem, 8.5vw, 9rem) clamp(7rem, 9vw, 10rem);

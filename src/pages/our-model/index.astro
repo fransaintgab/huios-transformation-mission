@@ -1,0 +1,487 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../../components/page/PageHero.astro";
+import Chapter from "../../components/page/Chapter.astro";
+import NextChapter from "../../components/page/NextChapter.astro";
+import { leadership, model } from "../../data/about";
+import { departments } from "../../data/departments";
+import { cellMinistry } from "../../data/ministries";
+import { nextPageAfter } from "../../data/navigation";
+import { transformationPipeline } from "../../data/transformationPipeline";
+
+const stages = transformationPipeline.map((stage, index) => ({ ...stage, department: departments[index] }));
+const chapters = [
+  { id: "pipeline", label: "The Pipeline" },
+  { id: "oversight", label: "Oversight" },
+  { id: "cell-ministry", label: "Cell Ministry" },
+] as const;
+const next = nextPageAfter("/our-model/");
+---
+
+<BaseLayout
+  title="Our Model"
+  description="The Huios transformation pipeline: WIN, GROW, BUILD and SEND. Four departments, apostolic oversight, and a Cell Ministry that connects them all."
+  headerOverlay
+>
+  <PageHero
+    page="Our Model"
+    eyebrow="The Transformation Pipeline"
+    title={["Win. Grow.", "Build. Send."]}
+    lead={model.introduction.replace(/:$/, ".")}
+    chapters={chapters}
+  />
+
+  <Chapter id="pipeline" number="01" label="The Pipeline" title={["Four stages.", "Four departments."]}>
+    <ol class="stages">
+      {stages.map((stage, index) => (
+        <li class="stage" id={stage.id} data-reveal-group>
+          <div class="stage-mark" data-reveal-item>
+            <span class="stage-number">{stage.number} / Stage</span>
+            <h3>{stage.title}</h3>
+          </div>
+
+          <div class="stage-content">
+            <p class="stage-description" data-reveal-item style="--reveal-order: 1">{stage.description}</p>
+
+            <div class="department" data-reveal-item style="--reveal-order: 2">
+              <h4>{stage.department.name}</h4>
+              <dl>
+                <div>
+                  <dt>Mandate</dt>
+                  <dd>{stage.department.mandate}</dd>
+                </div>
+                <div>
+                  <dt>Offices</dt>
+                  <dd>
+                    <ul class="offices">
+                      {stage.department.offices.map((office) => <li>{office}</li>)}
+                    </ul>
+                  </dd>
+                </div>
+              </dl>
+              <p class="department-summary">{stage.department.summary}</p>
+            </div>
+          </div>
+
+          {index < stages.length - 1 && <span class="stage-flow" aria-hidden="true">↓</span>}
+        </li>
+      ))}
+    </ol>
+
+    <div class="cycle" data-reveal-group>
+      <p class="cycle-mark" data-reveal-item aria-hidden="true">SEND <span>→</span> WIN</p>
+      <p class="cycle-statement" data-reveal-item style="--reveal-order: 1">{model.cycle}</p>
+    </div>
+  </Chapter>
+
+  <Chapter id="oversight" number="02" label="Organizational Structure" title={["Oversight and", "direction."]} tone="paper" layout="split">
+    <div class="offices-of-oversight" data-reveal-group>
+      {leadership.map((office, index) => (
+        <article data-reveal-item style={`--reveal-order: ${index}`}>
+          <span class="oversight-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+          <h3>{office.title}</h3>
+          <p>{office.description}</p>
+        </article>
+      ))}
+    </div>
+
+    <div class="department-index" data-reveal-group>
+      <h3 data-reveal-item>Departments</h3>
+      <ol>
+        {departments.map((department, index) => (
+          <li data-reveal-item style={`--reveal-order: ${index + 1}`}>
+            <a href={`#${department.stage.toLowerCase()}`}>
+              <span class="index-stage">{department.stage}</span>
+              <span>{department.name}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </Chapter>
+
+  <Chapter id="cell-ministry" number="03" label="Cell Ministry" title={["Across every", "department."]} intro={cellMinistry.statement} tone="ink">
+    <div class="connection" aria-hidden="true" data-reveal-group>
+      <div class="connection-stages">
+        {departments.map((department, index) => (
+          <span data-reveal-item style={`--reveal-order: ${index}`}>{department.stage}</span>
+        ))}
+      </div>
+      <div class="connection-bar" data-reveal-item style="--reveal-order: 4">Cell Ministry</div>
+    </div>
+
+    <div class="roles" data-reveal-group>
+      <h3 data-reveal-item>The cell structure</h3>
+      <ol>
+        {cellMinistry.roles.map((role, index) => (
+          <li data-reveal-item style={`--reveal-order: ${index % 3 + 1}`}>
+            <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+            {role}
+          </li>
+        ))}
+      </ol>
+    </div>
+  </Chapter>
+
+  <NextChapter href={next.href} label={next.label} />
+</BaseLayout>
+
+<style>
+  .stages {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .stage {
+    position: relative;
+    display: grid;
+    gap: 2rem;
+    padding-block: clamp(3rem, 5vw, 5rem);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .stage-number {
+    display: block;
+    color: var(--color-earth);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .stage h3 {
+    margin: 0.75rem 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(5rem, 11vw, 11rem);
+    font-weight: 500;
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+  }
+
+  .stage-description {
+    max-width: 32rem;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 2.8vw, 2.9rem);
+    font-weight: 500;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+  }
+
+  .department {
+    margin-top: clamp(2rem, 3vw, 2.75rem);
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--color-ember);
+  }
+
+  .department h4 {
+    margin: 0 0 1.5rem;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .department dl {
+    display: grid;
+    gap: 1.25rem;
+    margin: 0;
+  }
+
+  .department dl div {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .department dt {
+    color: var(--color-text-muted);
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .department dd {
+    margin: 0;
+    line-height: 1.7;
+  }
+
+  .offices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.3rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .offices li {
+    padding: 0.35rem 0.7rem;
+    border: 1px solid var(--color-border);
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .department-summary {
+    max-width: 36rem;
+    margin: 1.5rem 0 0;
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .stage-flow {
+    position: absolute;
+    bottom: -0.9rem;
+    left: 0;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 1.8rem;
+    height: 1.8rem;
+    background: var(--color-ivory);
+    color: var(--color-ember);
+    font-size: 1rem;
+  }
+
+  .cycle {
+    display: grid;
+    gap: 1.5rem;
+    padding: clamp(2.5rem, 4vw, 4rem) clamp(1.5rem, 4vw, 4rem);
+    background: var(--color-ink);
+    color: var(--color-ivory);
+  }
+
+  .cycle-mark {
+    margin: 0;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+  }
+
+  .cycle-mark span {
+    margin-inline: 0.5rem;
+    color: var(--color-flame);
+  }
+
+  .cycle-statement {
+    max-width: 50rem;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 3.2vw, 3.3rem);
+    font-weight: 500;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+  }
+
+  .offices-of-oversight {
+    display: grid;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .offices-of-oversight article {
+    display: grid;
+    gap: 1rem;
+    padding-block: clamp(2rem, 3.5vw, 3rem);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .oversight-number {
+    color: var(--color-earth);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+  }
+
+  .offices-of-oversight h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.3rem, 3.6vw, 3.6rem);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.025em;
+  }
+
+  .offices-of-oversight p {
+    max-width: 34rem;
+    margin: 0;
+    font-size: clamp(1rem, 1.15vw, 1.1rem);
+    line-height: 1.75;
+  }
+
+  .department-index {
+    margin-top: clamp(3rem, 5vw, 4.5rem);
+  }
+
+  .department-index h3 {
+    margin: 0 0 1rem;
+    color: var(--color-earth);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .department-index ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .department-index a {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 1rem;
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    text-decoration: none;
+    transition: color 180ms ease;
+  }
+
+  .department-index a::after {
+    color: var(--color-ember);
+    content: "↓";
+  }
+
+  .department-index a:hover {
+    color: var(--color-earth);
+  }
+
+  .index-stage {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+  }
+
+  .connection {
+    margin-bottom: clamp(4rem, 6vw, 6rem);
+  }
+
+  .connection-stages {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1px;
+  }
+
+  .connection-stages span {
+    position: relative;
+    padding-bottom: clamp(3rem, 6vw, 5rem);
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 4vw, 3.5rem);
+    font-weight: 500;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .connection-stages span::after {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    height: clamp(2rem, 4.5vw, 3.75rem);
+    background: var(--color-flame);
+    content: "";
+  }
+
+  .connection-bar {
+    padding: 1.15rem 1.5rem;
+    background: var(--color-ember);
+    color: var(--color-ink);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .roles h3 {
+    margin: 0 0 1.25rem;
+    color: var(--color-flame);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .roles ol {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid color-mix(in srgb, var(--color-ivory) 15%, transparent);
+  }
+
+  .roles li {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+    align-items: baseline;
+    padding-block: 1.25rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ivory) 15%, transparent);
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 2.5vw, 2.4rem);
+    font-weight: 500;
+    line-height: 1.1;
+  }
+
+  .roles li span {
+    color: var(--color-flame);
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+  }
+
+  @media (min-width: 60rem) {
+    .roles ol {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: clamp(2rem, 4vw, 4rem);
+    }
+  }
+
+  @media (min-width: 75rem) {
+    .stage {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: clamp(1rem, 2vw, 2rem);
+    }
+
+    .stage-mark {
+      grid-column: 1 / span 5;
+    }
+
+    .stage-content {
+      grid-column: 7 / span 6;
+      padding-top: 1.75rem;
+    }
+  }
+
+  @media (max-width: 47.999rem) {
+    .stage h3 {
+      font-size: clamp(4.5rem, 24vw, 6.5rem);
+    }
+
+    .stage-description {
+      font-size: 1.8rem;
+    }
+
+    .department-index a {
+      grid-template-columns: 3.75rem minmax(0, 1fr) auto;
+    }
+
+    .connection-stages span {
+      font-size: 1.35rem;
+    }
+
+    .connection-bar {
+      font-size: 0.68rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .department-index a {
+      transition: none;
+    }
+  }
+</style>

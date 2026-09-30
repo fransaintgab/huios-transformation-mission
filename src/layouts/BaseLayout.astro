@@ -1,6 +1,7 @@
 ---
 import Header from "../components/global/Header.astro";
 import Footer from "../components/global/Footer.astro";
+import DemoNotice from "../components/global/DemoNotice.astro";
 import "@fontsource-variable/cormorant-garamond/wght.css";
 import "@fontsource-variable/manrope/wght.css";
 import "../styles/global.css";
@@ -43,5 +44,26 @@ const canonical = canonicalProp ?? (Astro.site
       <slot />
     </main>
     <Footer />
+    <DemoNotice />
   </body>
 </html>
+
+<script>
+  // One shared reveal enhancement for every page. Content stays visible without it.
+  if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        entry.target.classList.add("is-revealed");
+        observer.unobserve(entry.target);
+      }
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.01 });
+
+    document.querySelectorAll<HTMLElement>("[data-reveal-group]").forEach((group) => {
+      if (group.getBoundingClientRect().top < window.innerHeight * 0.92) return;
+      group.classList.add("is-reveal-pending");
+      observer.observe(group);
+    });
+  }
+</script>
+
