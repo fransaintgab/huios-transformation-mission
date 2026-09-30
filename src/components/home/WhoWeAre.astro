@@ -54,9 +54,9 @@ const imageSizes = image?.sizes ?? "(max-width: 48rem) 90vw, (max-width: 90rem) 
       </div>
     </div>
 
-    <div class="who-visual" data-reveal-group>
-      <div class="who-image" data-reveal>
-        {image ? (
+    {image && (
+      <div class="who-visual" data-reveal-group>
+        <div class="who-image" data-reveal>
           <picture>
             {image.mobileSrcSet && <source media="(max-width: 47.999rem)" srcset={image.mobileSrcSet} />}
             {image.avifSrcSet && <source type="image/avif" srcset={image.avifSrcSet} sizes={imageSizes} />}
@@ -70,11 +70,9 @@ const imageSizes = image?.sizes ?? "(max-width: 48rem) 90vw, (max-width: 90rem) 
               decoding="async"
             />
           </picture>
-        ) : (
-          <div class="image-placeholder" aria-hidden="true"></div>
-        )}
+        </div>
       </div>
-    </div>
+    )}
   </Container>
 </section>
 
