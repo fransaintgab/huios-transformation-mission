@@ -1,0 +1,180 @@
+---
+import Container from "../ui/Container.astro";
+import Eyebrow from "../ui/Eyebrow.astro";
+
+type Tone = "ivory" | "paper" | "ink" | "charcoal";
+
+interface Props {
+  id: string;
+  number: string;
+  label: string;
+  /** Headline lines; each renders on its own line. */
+  title: readonly string[];
+  intro?: string;
+  tone?: Tone;
+  /** "split" pins the header beside the content on wide screens. */
+  layout?: "stacked" | "split";
+  class?: string;
+}
+
+const {
+  id,
+  number,
+  label,
+  title,
+  intro,
+  tone = "ivory",
+  layout = "stacked",
+  class: className,
+} = Astro.props;
+const dark = tone === "ink" || tone === "charcoal";
+---
+
+<section
+  id={id}
+  class:list={["chapter", `chapter--${tone}`, `chapter--${layout}`, { "chapter--dark": dark }, className]}
+  aria-labelledby={`${id}-title`}
+>
+  <Container>
+    <div class="chapter-layout">
+      <header class="chapter-header" data-reveal-group>
+        <div data-reveal-item>
+          <Eyebrow>{number} / {label}</Eyebrow>
+        </div>
+        <h2 id={`${id}-title`} data-reveal-item style="--reveal-order: 1">
+          {title.map((line) => <span>{line} </span>)}
+        </h2>
+        {intro && <p class="chapter-intro" data-reveal-item style="--reveal-order: 2">{intro}</p>}
+      </header>
+
+      <div class="chapter-body">
+        <slot />
+      </div>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .chapter {
+    --button-hover-color: var(--color-earth);
+    --chapter-rule: var(--color-border);
+    --chapter-muted: var(--color-text-muted);
+    --chapter-accent: var(--color-earth);
+    padding-block: clamp(5.5rem, 8.5vw, 9rem);
+    background: var(--color-ivory);
+    color: var(--color-ink);
+  }
+
+  .chapter--paper {
+    background: var(--color-paper);
+  }
+
+  .chapter--dark {
+    --focus-color: var(--color-flame);
+    --button-hover-color: var(--color-flame);
+    --chapter-rule: color-mix(in srgb, var(--color-ivory) 15%, transparent);
+    --chapter-muted: color-mix(in srgb, var(--color-ivory) 72%, transparent);
+    --chapter-accent: var(--color-flame);
+    background: var(--color-ink);
+    color: var(--color-ivory);
+  }
+
+  .chapter--charcoal {
+    background: var(--color-charcoal);
+  }
+
+  .chapter-header :global(.eyebrow) {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: clamp(2.5rem, 4.5vw, 4.5rem);
+    color: var(--chapter-accent);
+  }
+
+  .chapter--dark .chapter-header :global(.eyebrow) {
+    color: var(--color-ivory);
+  }
+
+  .chapter--dark .chapter-header :global(.eyebrow)::before {
+    flex: none;
+    width: 1.5rem;
+    height: 1px;
+    background: var(--color-flame);
+    content: "";
+  }
+
+  h2 {
+    max-width: 100%;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 5.4vw, 6rem);
+    font-weight: 500;
+    line-height: 0.94;
+    letter-spacing: -0.035em;
+    text-wrap: initial;
+  }
+
+  h2 span {
+    display: block;
+  }
+
+  .chapter-intro {
+    max-width: 36rem;
+    margin: clamp(1.75rem, 2.5vw, 2.5rem) 0 0;
+    color: var(--chapter-muted);
+    font-size: clamp(1rem, 1.2vw, 1.15rem);
+    line-height: 1.75;
+  }
+
+  .chapter-body {
+    min-width: 0;
+    margin-top: clamp(3.5rem, 6vw, 6rem);
+  }
+
+  @media (min-width: 75rem) {
+    .chapter--split .chapter-layout {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: clamp(1rem, 2vw, 2rem);
+      align-items: start;
+    }
+
+    .chapter--split .chapter-header {
+      position: sticky;
+      top: 7rem;
+      grid-column: 1 / span 5;
+    }
+
+    .chapter--split h2 {
+      font-size: clamp(3rem, 4.4vw, 5rem);
+    }
+
+    .chapter--split .chapter-body {
+      grid-column: 7 / span 6;
+      margin-top: 0;
+      padding-top: clamp(5rem, 7vw, 7.5rem);
+    }
+  }
+
+  @media (max-width: 47.999rem) {
+    .chapter {
+      padding-block: 5rem 5.5rem;
+    }
+
+    .chapter-header :global(.eyebrow) {
+      margin-bottom: 2.25rem;
+    }
+
+    h2 {
+      font-size: clamp(2.9rem, 11vw, 4rem);
+    }
+
+    .chapter-intro {
+      font-size: 1rem;
+    }
+
+    .chapter-body {
+      margin-top: 3.25rem;
+    }
+  }
+</style>

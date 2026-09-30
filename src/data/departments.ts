@@ -4,6 +4,7 @@ export interface Department {
   readonly name: string;
   readonly mandate: string;
   readonly offices: readonly string[];
+  readonly summary: string;
 }
 
 // Source: HUIOS TRANSFORMATION MISSION client brief.
@@ -19,6 +20,7 @@ export const departments = [
       "New Converts Care",
       "Media & Digital Evangelism",
     ],
+    summary: "Primary responsibilities include evangelistic campaigns, community transformation, missions, follow-up, and digital evangelism.",
   },
   {
     stage: "GROW",
@@ -32,6 +34,7 @@ export const departments = [
       "Children & Youth Development",
       "Spiritual Growth & Maturity",
     ],
+    summary: "This department oversees discipleship pathways, doctrinal instruction, cell groups, and spiritual formation.",
   },
   {
     stage: "BUILD",
@@ -45,6 +48,7 @@ export const departments = [
       "Facilities & Logistics",
       "Communications & Public Relations",
     ],
+    summary: "BUILD provides the operational backbone that enables the ministry to function with excellence.",
   },
   {
     stage: "SEND",
@@ -57,5 +61,6 @@ export const departments = [
       "Apostolic Missions",
       "Leadership Assessment",
     ],
+    summary: "SEND equips believers for leadership, ministry placement, church planting, and apostolic assignments.",
   },
 ] as const satisfies readonly Department[];

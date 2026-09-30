@@ -1,0 +1,242 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../../components/page/PageHero.astro";
+import Chapter from "../../components/page/Chapter.astro";
+import NextChapter from "../../components/page/NextChapter.astro";
+import Button from "../../components/ui/Button.astro";
+import { departments } from "../../data/departments";
+import { cellMinistry, ministries } from "../../data/ministries";
+import { nextPageAfter } from "../../data/navigation";
+import { slugify } from "../../utils/slugify";
+
+// Where a ministry is also named as an office in the brief, show the department it sits in.
+const ministryList = ministries.map((ministry) => ({
+  ...ministry,
+  id: slugify(ministry.name),
+  department: departments.find((department) => (department.offices as readonly string[]).includes(ministry.name)),
+}));
+const chapters = [
+  { id: "ministries", label: "The Ministries" },
+  { id: "cell-ministry", label: "Cell Ministry" },
+] as const;
+const next = nextPageAfter("/ministries/");
+---
+
+<BaseLayout
+  title="Ministries"
+  description="The ministries of Huios Transformation Mission, from Transformation Worshippers and the Prayer Ministry to the School of Discipleship and the Cell Ministry."
+  headerOverlay
+>
+  <PageHero
+    page="Ministries"
+    title={["One mission.", "Many expressions."]}
+    chapters={chapters}
+  />
+
+  <Chapter id="ministries" number="01" label="The Ministries" title={["Nine ministries."]} layout="split">
+    <ol class="ministry-index">
+      {ministryList.map((ministry) => (
+        <li id={ministry.id} data-reveal-group>
+          <div class="ministry-row" data-reveal-item>
+            <span class="ministry-number" aria-hidden="true">{ministry.number}</span>
+            <h3>{ministry.name}</h3>
+            {ministry.department && (
+              <a class="ministry-department" href={`/our-model/#${ministry.department.stage.toLowerCase()}`}>
+                <span class="sr-only">{ministry.name} is an office of the </span>
+                <span class="department-stage">{ministry.department.stage}</span>
+                {ministry.department.name}
+              </a>
+            )}
+          </div>
+        </li>
+      ))}
+    </ol>
+  </Chapter>
+
+  <Chapter id="cell-ministry" number="02" label="Cell Ministry" title={["Where every", "department connects."]} tone="ink">
+    <div class="cell-layout">
+      <blockquote class="cell-statement" data-reveal-group>
+        <p data-reveal-item>{cellMinistry.statement}</p>
+      </blockquote>
+
+      <div class="cell-roles" data-reveal-group>
+        <h3 data-reveal-item>The cell structure includes</h3>
+        <ol>
+          {cellMinistry.roles.map((role, index) => (
+            <li data-reveal-item style={`--reveal-order: ${index + 1}`}>
+              <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+              {role}
+            </li>
+          ))}
+        </ol>
+        <div class="cell-actions" data-reveal-item style="--reveal-order: 7">
+          <Button href="/get-involved/#join-a-cell">JOIN A CELL <span aria-hidden="true">→</span></Button>
+          <Button href="/our-model/#cell-ministry" variant="text">SEE HOW IT CONNECTS <span aria-hidden="true">→</span></Button>
+        </div>
+      </div>
+    </div>
+  </Chapter>
+
+  <NextChapter href={next.href} label={next.label} />
+</BaseLayout>
+
+<style>
+  .ministry-index {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .ministry-index li {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .ministry-row {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+    align-items: baseline;
+    column-gap: 1rem;
+    padding-block: clamp(1.5rem, 2.4vw, 2.25rem);
+  }
+
+  .ministry-number {
+    color: var(--color-earth);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+  }
+
+  .ministry-row h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 3.6vw, 3.75rem);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.025em;
+  }
+
+  .ministry-department {
+    display: inline-flex;
+    grid-column: 2;
+    align-items: baseline;
+    gap: 0.6rem;
+    width: fit-content;
+    margin-top: 0.9rem;
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 180ms ease;
+  }
+
+  .ministry-department:hover {
+    color: var(--color-earth);
+    text-decoration: underline;
+  }
+
+  .department-stage {
+    padding: 0.2rem 0.45rem;
+    background: var(--color-ink);
+    color: var(--color-flame);
+    font-size: 0.6rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+  }
+
+  .cell-layout {
+    display: grid;
+    gap: clamp(3.5rem, 6vw, 5rem);
+  }
+
+  .cell-statement {
+    margin: 0;
+    padding-left: clamp(1.25rem, 3vw, 2.5rem);
+    border-left: 2px solid var(--color-flame);
+  }
+
+  .cell-statement p {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.4vw, 3.5rem);
+    font-weight: 500;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+  }
+
+  .cell-roles h3 {
+    margin: 0 0 1.25rem;
+    color: var(--color-flame);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .cell-roles ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid color-mix(in srgb, var(--color-ivory) 15%, transparent);
+  }
+
+  .cell-roles li {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+    align-items: baseline;
+    padding-block: 1.1rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ivory) 15%, transparent);
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 2.3vw, 2.2rem);
+    font-weight: 500;
+    line-height: 1.1;
+  }
+
+  .cell-roles li span {
+    color: var(--color-flame);
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+  }
+
+  .cell-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 2rem;
+    margin-top: 2.5rem;
+  }
+
+  .cell-actions :global(.button) {
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+  }
+
+  .cell-actions :global(.button--primary) {
+    min-height: 3rem;
+    padding-inline: 1.3rem;
+  }
+
+  @media (min-width: 75rem) {
+    .cell-layout {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: clamp(1rem, 2vw, 2rem);
+      align-items: start;
+    }
+
+    .cell-statement {
+      grid-column: 1 / span 6;
+    }
+
+    .cell-roles {
+      grid-column: 8 / span 5;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ministry-department {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,148 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../../components/page/PageHero.astro";
+import Chapter from "../../components/page/Chapter.astro";
+import NextChapter from "../../components/page/NextChapter.astro";
+import type { NavigationLink } from "../../data/navigation";
+import { contactCategories, contactChannels } from "../../data/contact";
+import { slugify } from "../../utils/slugify";
+
+const relatedLinks: Record<string, NavigationLink> = {
+  "Partnership": { label: "Become a Ministry Partner", href: "/get-involved/#become-a-ministry-partner" },
+  "Visit a Gathering": { label: "Major programs", href: "/programs/" },
+  "Volunteer Registration": { label: "Become a Volunteer", href: "/get-involved/#become-a-volunteer" },
+};
+const categories = contactCategories.map((category) => ({
+  ...category,
+  id: slugify(category.label),
+  related: relatedLinks[category.label],
+}));
+---
+
+<BaseLayout
+  title="Contact"
+  description="Contact Huios Transformation Mission for prayer requests, partnership, visiting a gathering, volunteer registration and general enquiries."
+  headerOverlay
+>
+  <PageHero
+    page="Contact"
+    title={["Connect", "with Huios."]}
+    chapters={[{ id: "enquiries", label: "How We Can Help" }]}
+  />
+
+  <Chapter id="enquiries" number="01" label="How We Can Help" title={["Prayer, partnership,", "and every enquiry."]} layout="split">
+    <ul class="enquiry-list">
+      {categories.map((category) => (
+        <li id={category.id} data-reveal-group>
+          <div class="enquiry" data-reveal-item>
+            <span class="enquiry-number" aria-hidden="true">{category.number}</span>
+            <h3>{category.label}</h3>
+            {category.related && (
+              <a href={category.related.href}>{category.related.label} <span aria-hidden="true">→</span></a>
+            )}
+          </div>
+        </li>
+      ))}
+    </ul>
+
+    {contactChannels.length > 0 ? (
+      <dl class="channels" data-reveal-group>
+        {contactChannels.map((channel) => (
+          <div data-reveal-item>
+            <dt>{channel.label}</dt>
+            <dd>{channel.href ? <a href={channel.href}>{channel.value}</a> : channel.value}</dd>
+          </div>
+        ))}
+      </dl>
+    ) : import.meta.env.DEV && (
+      <p class="dev-note">
+        Development note, hidden in production: add the client's confirmed email, phone,
+        address or social channels to <code>contactChannels</code> in <code>src/data/contact.ts</code>.
+      </p>
+    )}
+  </Chapter>
+
+  <NextChapter href="/" label="Home" eyebrow="Return" />
+</BaseLayout>
+
+<style>
+  .enquiry-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .enquiry-list li {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .enquiry {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+    align-items: baseline;
+    column-gap: 1rem;
+    row-gap: 0.85rem;
+    padding-block: clamp(1.6rem, 2.6vw, 2.4rem);
+  }
+
+  .enquiry-number {
+    color: var(--color-earth);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+  }
+
+  .enquiry h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 3.6vw, 3.6rem);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.025em;
+  }
+
+  .enquiry a {
+    grid-column: 2;
+    width: fit-content;
+    color: var(--color-text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .enquiry a:hover {
+    color: var(--color-earth);
+    text-decoration: underline;
+  }
+
+  .channels {
+    display: grid;
+    gap: 1.25rem;
+    margin: clamp(3rem, 5vw, 4.5rem) 0 0;
+  }
+
+  .channels dt {
+    color: var(--color-earth);
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .channels dd {
+    margin: 0.25rem 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2vw, 2rem);
+  }
+
+  .dev-note {
+    margin: 3rem 0 0;
+    padding: 1rem 1.25rem;
+    border: 1px dashed var(--color-burnt);
+    color: var(--color-earth);
+    font-size: 0.85rem;
+  }
+</style>

@@ -1,0 +1,113 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../../components/page/PageHero.astro";
+import Chapter from "../../components/page/Chapter.astro";
+import NextChapter from "../../components/page/NextChapter.astro";
+import { mediaCategories } from "../../data/media";
+import { nextPageAfter } from "../../data/navigation";
+import { slugify } from "../../utils/slugify";
+
+const categories = mediaCategories.map((category) => ({ ...category, id: slugify(category.name) }));
+const next = nextPageAfter("/media/");
+---
+
+<BaseLayout
+  title="Media"
+  description="HUIOS TV and the media of Huios Transformation Mission: sermons, worship sessions, articles, devotionals, podcasts, conference messages, photo gallery and livestreams."
+  headerOverlay
+>
+  <PageHero
+    page="Media"
+    eyebrow="HUIOS TV"
+    title={["Watch.", "Listen.", "Explore."]}
+    chapters={[{ id: "categories", label: "Media Categories" }]}
+  >
+    <div slot="aside" class="tv-stage">
+      <img
+        src="/brand/huios-tv-white.png"
+        width="1533"
+        height="1533"
+        alt="HUIOS TV"
+        decoding="async"
+        fetchpriority="high"
+      />
+    </div>
+  </PageHero>
+
+  <Chapter id="categories" number="01" label="Media Categories" title={["Watch, listen,", "and read."]}>
+    <ul class="category-grid" data-reveal-group>
+      {categories.map((category, index) => (
+        <li id={category.id} data-reveal-item style={`--reveal-order: ${index % 4}`}>
+          <span class="category-number" aria-hidden="true">{category.number}</span>
+          <h3>{category.name}</h3>
+        </li>
+      ))}
+    </ul>
+  </Chapter>
+
+  <NextChapter href={next.href} label={next.label} />
+</BaseLayout>
+
+<style>
+  .tv-stage {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    border: 1px solid color-mix(in srgb, var(--color-ivory) 14%, transparent);
+    background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--color-burnt) 22%, transparent), transparent 65%);
+  }
+
+  .tv-stage img {
+    width: 72%;
+    height: auto;
+  }
+
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-border);
+    border-left: 1px solid var(--color-border);
+  }
+
+  .category-grid li {
+    display: flex;
+    min-height: clamp(10rem, 18vw, 16rem);
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: clamp(1.25rem, 2vw, 2rem);
+    border-right: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .category-number {
+    color: var(--color-earth);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+  }
+
+  .category-grid h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 2.6vw, 2.75rem);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  @media (min-width: 60rem) {
+    .category-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 74.999rem) {
+    .tv-stage {
+      max-width: 16rem;
+    }
+  }
+</style>

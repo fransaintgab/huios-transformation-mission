@@ -1,0 +1,75 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/ui/Container.astro";
+import Button from "../components/ui/Button.astro";
+import { pageSequence } from "../data/navigation";
+---
+
+<BaseLayout title="Page not found" description="The page you were looking for could not be found." headerOverlay>
+  <section class="not-found" aria-labelledby="not-found-title">
+    <Container>
+      <p class="code" aria-hidden="true">404</p>
+      <h1 id="not-found-title">This page could not be found.</h1>
+      <p class="lead">The link may be out of date, or the page may have moved. These are the places you can go from here.</p>
+      <ul>
+        {pageSequence.map((link) => <li><a href={link.href}>{link.label}</a></li>)}
+      </ul>
+      <Button href="/" tone="light">RETURN HOME <span aria-hidden="true">→</span></Button>
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    --focus-color: var(--color-flame);
+    min-height: 100svh;
+    padding-block: clamp(9rem, 18vh, 12rem) clamp(5rem, 8vw, 8rem);
+    background: var(--color-ink);
+    color: var(--color-ivory);
+  }
+
+  .code {
+    margin: 0;
+    color: var(--color-flame);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+  }
+
+  h1 {
+    max-width: 14ch;
+    margin: 1.5rem 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 7vw, 7rem);
+    font-weight: 500;
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+  }
+
+  .lead {
+    max-width: 34rem;
+    margin: 2rem 0 0;
+    color: color-mix(in srgb, var(--color-ivory) 82%, transparent);
+    line-height: 1.75;
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2rem;
+    margin: 2.5rem 0 3rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  ul a {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  ul a:hover {
+    color: var(--color-flame);
+    text-decoration: underline;
+  }
+</style>

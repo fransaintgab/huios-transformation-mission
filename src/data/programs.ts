@@ -2,6 +2,8 @@ export interface Program {
   readonly number: string;
   readonly name: string;
   readonly description: string;
+  /** Rhythm stated in the brief's own description, where it gives one. */
+  readonly rhythm?: string;
 }
 
 // Source: HUIOS TRANSFORMATION MISSION client brief.
@@ -9,6 +11,7 @@ export const programs = [
   {
     number: "01",
     name: "Annual Retreat",
+    rhythm: "Yearly",
     description: "A yearly gathering focused on spiritual renewal, consecration, deep teaching, prayer, worship, and prophetic direction for the ministry. It serves as a time of alignment with God's vision for the coming season.",
   },
   {
@@ -29,6 +32,7 @@ export const programs = [
   {
     number: "05",
     name: "Global Altar Project",
+    rhythm: "Weekly · Online",
     description: "A weekly online gathering that unites believers across locations for worship, apostolic teaching, prayer, and spiritual formation. The Global Altar Project exists to cultivate a consistent rhythm of encounter with God and strengthen believers through the ministry of the Word.",
   },
   {

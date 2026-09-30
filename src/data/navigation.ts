@@ -24,6 +24,17 @@ export const missionLink = {
 
 export const mediaLink = primaryNavigation[4];
 
+export const contactLink = {
+  label: "Contact",
+  href: "/contact/",
+} as const satisfies NavigationLink;
+
+/** Reading order of the inner pages; each page closes by pointing to the next one. */
+export const pageSequence = [
+  ...primaryNavigation,
+  contactLink,
+] as const satisfies readonly NavigationLink[];
+
 export const footerNavigation = [
   {
     title: "Explore",
@@ -32,19 +43,26 @@ export const footerNavigation = [
   {
     title: "Connect",
     links: [
-      { label: "Join a Cell", href: "/get-involved/join-a-cell/" },
-      { label: "Volunteer", href: "/get-involved/volunteer/" },
-      { label: "Partnership", href: "/get-involved/partnership/" },
-      { label: "Prayer Request", href: "/get-involved/prayer-request/" },
+      { label: "Join a Cell", href: "/get-involved/#join-a-cell" },
+      { label: "Volunteer", href: "/get-involved/#become-a-volunteer" },
+      { label: "Partnership", href: "/get-involved/#become-a-ministry-partner" },
+      { label: "Prayer Request", href: "/contact/#prayer-requests" },
+      contactLink,
     ],
   },
   {
     title: "Media",
     links: [
-      { label: "HUIOS TV", href: "/media/huios-tv/" },
-      { label: "Sermons", href: "/media/sermons/" },
-      { label: "Podcasts", href: "/media/podcasts/" },
-      { label: "Livestream", href: "/media/livestream/" },
+      { label: "HUIOS TV", href: "/media/" },
+      { label: "Sermons", href: "/media/#sermons" },
+      { label: "Podcasts", href: "/media/#podcasts" },
+      { label: "Livestream", href: "/media/#livestreams" },
     ],
   },
 ] as const satisfies readonly FooterLinkGroup[];
+
+/** The page that follows `href` in the reading order, or home after the last page. */
+export function nextPageAfter(href: string): NavigationLink {
+  const index = pageSequence.findIndex((link) => link.href === href);
+  return pageSequence[index + 1] ?? { label: "Home", href: "/" };
+}
