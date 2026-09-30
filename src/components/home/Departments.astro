@@ -1,0 +1,432 @@
+---
+import Container from "../ui/Container.astro";
+import Button from "../ui/Button.astro";
+import Eyebrow from "../ui/Eyebrow.astro";
+import { primaryNavigation } from "../../data/navigation";
+import { departments } from "../../data/departments";
+---
+
+<section class="departments" aria-labelledby="departments-title" data-departments>
+  <Container>
+    <div class="departments-intro" data-reveal-group>
+      <h2 id="departments-title" class="sr-only">Our Departments</h2>
+      <div class="departments-marker" data-reveal>
+        <Eyebrow>06 / OUR DEPARTMENTS</Eyebrow>
+      </div>
+      <p class="intro-heading" data-reveal>The structure behind the mission.</p>
+    </div>
+
+    <div class="departments-layout" data-reveal-group>
+      <div class="department-index" hidden data-department-index>
+        {departments.map((department) => (
+          <button
+            class="department-tab"
+            type="button"
+            id={`department-tab-${department.stage.toLowerCase()}`}
+            data-department-tab={department.stage.toLowerCase()}
+          >
+            <span class="tab-number">{department.number}</span>
+            <span class="tab-stage">{department.stage}</span>
+          </button>
+        ))}
+      </div>
+
+      <div class="department-canvas">
+        <div class="department-articles">
+          {departments.map((department) => (
+            <article
+              class="department-panel"
+              id={`department-panel-${department.stage.toLowerCase()}`}
+              data-department-panel={department.stage.toLowerCase()}
+            >
+              <p class="department-kicker">{department.number} / {department.stage}</p>
+              <div class="department-copy">
+                <h3 tabindex="-1">{department.name}</h3>
+                <p class="department-mandate">{department.mandate}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div class="department-cta">
+          <Button href={primaryNavigation[1].href} variant="text">
+            EXPLORE OUR MODEL <span aria-hidden="true">→</span>
+          </Button>
+        </div>
+      </div>
+    </div>
+  </Container>
+</section>
+
+<script>
+  const departmentSection = document.querySelector<HTMLElement>("[data-departments]");
+  const departmentIndex = departmentSection?.querySelector<HTMLElement>("[data-department-index]");
+  const departmentTabs = [...(departmentSection?.querySelectorAll<HTMLButtonElement>("[data-department-tab]") ?? [])];
+  const departmentPanels = [...(departmentSection?.querySelectorAll<HTMLElement>("[data-department-panel]") ?? [])];
+
+  if (departmentSection && departmentIndex && departmentTabs.length === 4 && departmentPanels.length === departmentTabs.length) {
+    const wideDesktop = window.matchMedia("(min-width: 75rem)");
+    let activeDepartment = 0;
+
+    const showDepartment = (index: number, focusTab = false) => {
+      departmentPanels.forEach((panel, panelIndex) => {
+        panel.hidden = panelIndex !== index;
+      });
+      departmentTabs.forEach((tab, tabIndex) => {
+        tab.setAttribute("aria-selected", String(tabIndex === index));
+        tab.tabIndex = tabIndex === index ? 0 : -1;
+      });
+      activeDepartment = index;
+      if (focusTab) departmentTabs[index].focus();
+    };
+
+    const syncDepartments = () => {
+      if (wideDesktop.matches) {
+        departmentIndex.hidden = false;
+        departmentIndex.setAttribute("role", "tablist");
+        departmentIndex.setAttribute("aria-label", "Departments");
+        departmentIndex.setAttribute("aria-orientation", "vertical");
+        departmentTabs.forEach((tab, index) => {
+          tab.setAttribute("role", "tab");
+          tab.setAttribute("aria-controls", departmentPanels[index].id);
+        });
+        departmentPanels.forEach((panel, index) => {
+          panel.setAttribute("role", "tabpanel");
+          panel.setAttribute("aria-labelledby", departmentTabs[index].id);
+          panel.tabIndex = 0;
+        });
+        departmentSection.classList.add("is-enhanced");
+        showDepartment(activeDepartment);
+      } else {
+        if (departmentIndex.contains(document.activeElement)) {
+          departmentPanels[activeDepartment].querySelector("h3")?.focus();
+        }
+        departmentSection.classList.remove("is-enhanced");
+        departmentIndex.hidden = true;
+        departmentIndex.removeAttribute("role");
+        departmentIndex.removeAttribute("aria-label");
+        departmentIndex.removeAttribute("aria-orientation");
+        departmentTabs.forEach((tab) => {
+          tab.removeAttribute("role");
+          tab.removeAttribute("aria-controls");
+          tab.removeAttribute("aria-selected");
+          tab.removeAttribute("tabindex");
+        });
+        departmentPanels.forEach((panel) => {
+          panel.hidden = false;
+          panel.removeAttribute("role");
+          panel.removeAttribute("aria-labelledby");
+          panel.removeAttribute("tabindex");
+        });
+      }
+    };
+
+    departmentIndex.addEventListener("click", (event) => {
+      if (!(event.target instanceof Element)) return;
+      const tab = event.target.closest<HTMLButtonElement>("[data-department-tab]");
+      if (tab) showDepartment(departmentTabs.indexOf(tab));
+    });
+
+    departmentIndex.addEventListener("keydown", (event) => {
+      if (!(event.target instanceof HTMLButtonElement)) return;
+      const index = departmentTabs.indexOf(event.target);
+      if (index < 0) return;
+      let next: number;
+      switch (event.key) {
+        case "ArrowDown": next = (index + 1) % departmentTabs.length; break;
+        case "ArrowUp": next = (index - 1 + departmentTabs.length) % departmentTabs.length; break;
+        case "Home": next = 0; break;
+        case "End": next = departmentTabs.length - 1; break;
+        default: return;
+      }
+      event.preventDefault();
+      showDepartment(next, true);
+    });
+
+    wideDesktop.addEventListener("change", syncDepartments);
+    syncDepartments();
+  }
+</script>
+
+<style>
+  .departments {
+    --focus-color: var(--color-flame);
+    --button-hover-color: var(--color-flame);
+    padding-block: clamp(6rem, 8.5vw, 9rem);
+    background: var(--color-ink);
+    color: var(--color-ivory);
+  }
+
+  .departments-marker {
+    margin-bottom: clamp(3rem, 5vw, 5rem);
+  }
+
+  .departments-marker :global(.eyebrow) {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    color: var(--color-ivory);
+  }
+
+  .departments-marker :global(.eyebrow)::before {
+    flex: none;
+    width: 1.5rem;
+    height: 1px;
+    background: var(--color-flame);
+    content: "";
+  }
+
+  .intro-heading {
+    max-width: 60rem;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(3.75rem, 6vw, 6.5rem);
+    font-weight: 500;
+    line-height: 0.93;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .departments-layout {
+    margin-top: clamp(5rem, 8vw, 8rem);
+  }
+
+  .department-index[hidden],
+  .department-panel[hidden] {
+    display: none;
+  }
+
+  .department-panel {
+    display: grid;
+    gap: 1.5rem;
+    min-width: 0;
+    padding-block: clamp(2.75rem, 5vw, 4.5rem);
+    border-top: 1px solid color-mix(in srgb, var(--color-paper) 20%, transparent);
+  }
+
+  .department-panel:last-child {
+    border-bottom: 1px solid color-mix(in srgb, var(--color-paper) 20%, transparent);
+  }
+
+  .department-kicker,
+  .tab-number {
+    margin: 0;
+    color: var(--color-flame);
+    font-size: 0.7rem;
+    font-weight: 800;
+    line-height: 1.4;
+    letter-spacing: 0.16em;
+  }
+
+  .department-copy {
+    min-width: 0;
+  }
+
+  h3 {
+    max-width: 55rem;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 6vw, 6rem);
+    font-weight: 500;
+    line-height: 0.96;
+    letter-spacing: -0.035em;
+    overflow-wrap: normal;
+  }
+
+  .department-mandate {
+    max-width: 34rem;
+    margin: 1.8rem 0 0;
+    color: color-mix(in srgb, var(--color-ivory) 85%, transparent);
+    font-size: clamp(1rem, 1.15vw, 1.125rem);
+    line-height: 1.75;
+  }
+
+  .department-cta {
+    margin-top: clamp(3rem, 5vw, 5rem);
+  }
+
+  .department-cta :global(.button--text) {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+  }
+
+  .departments-intro [data-reveal],
+  .departments-layout {
+    transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .departments-intro.is-reveal-pending:not(.is-revealed) [data-reveal],
+  .departments-layout.is-reveal-pending:not(.is-revealed) {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  .intro-heading {
+    transition-delay: 80ms;
+  }
+
+  @media (min-width: 48rem) and (max-width: 74.999rem) {
+    .department-panel {
+      grid-template-columns: 8rem minmax(0, 1fr);
+      column-gap: clamp(2rem, 5vw, 5rem);
+    }
+
+    h3 {
+      font-size: clamp(3.5rem, 6vw, 5.5rem);
+    }
+  }
+
+  @media (min-width: 75rem) {
+    .departments.is-enhanced .departments-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      column-gap: clamp(3rem, 6vw, 7rem);
+      align-items: start;
+    }
+
+    .departments.is-enhanced .department-index {
+      display: block;
+    }
+
+    .department-tab {
+      position: relative;
+      display: grid;
+      grid-template-columns: 3rem minmax(0, 1fr);
+      align-items: center;
+      width: 100%;
+      min-height: 6.5rem;
+      padding: 1.1rem 0;
+      border: 0;
+      border-top: 1px solid color-mix(in srgb, var(--color-paper) 20%, transparent);
+      background: transparent;
+      color: color-mix(in srgb, var(--color-ivory) 60%, transparent);
+      text-align: left;
+      cursor: pointer;
+      transition: color 220ms ease;
+    }
+
+    .department-tab:last-child {
+      border-bottom: 1px solid color-mix(in srgb, var(--color-paper) 20%, transparent);
+    }
+
+    .department-tab::before {
+      position: absolute;
+      top: calc(50% - 0.2rem);
+      left: -1rem;
+      width: 0.4rem;
+      height: 0.4rem;
+      border-radius: 50%;
+      background: var(--color-flame);
+      opacity: 0;
+      content: "";
+    }
+
+    .department-tab[aria-selected="true"],
+    .department-tab:hover {
+      color: var(--color-ivory);
+    }
+
+    .department-tab[aria-selected="true"]::before {
+      opacity: 1;
+    }
+
+    .tab-number {
+      color: inherit;
+    }
+
+    .tab-stage {
+      font-family: var(--font-display);
+      font-size: clamp(2.7rem, 3.5vw, 3.6rem);
+      font-weight: 500;
+      line-height: 0.95;
+      letter-spacing: -0.025em;
+    }
+
+    .departments.is-enhanced .department-panel {
+      display: block;
+      min-height: clamp(26rem, 31vw, 30rem);
+      padding: 0;
+      border: 0;
+      animation: department-enter 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .departments.is-enhanced .department-panel[hidden] {
+      display: none;
+    }
+
+    .departments.is-enhanced h3 {
+      max-width: 48rem;
+      margin-top: clamp(2rem, 3vw, 3rem);
+      font-size: clamp(3.5rem, 5.5vw, 6.5rem);
+    }
+
+    .departments.is-enhanced .department-mandate {
+      margin-top: clamp(2rem, 3vw, 3rem);
+    }
+
+    .departments.is-enhanced .department-cta {
+      margin-top: 1.5rem;
+    }
+  }
+
+  @keyframes department-enter {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 47.999rem) {
+    .departments {
+      padding-block: 5.5rem 6rem;
+    }
+
+    .departments-marker {
+      margin-bottom: 3rem;
+    }
+
+    .intro-heading {
+      font-size: clamp(3.35rem, 11vw, 4.8rem);
+    }
+
+    .departments-layout {
+      margin-top: 4.5rem;
+    }
+
+    .department-panel {
+      gap: 1.3rem;
+      padding-block: 3rem;
+    }
+
+    h3 {
+      font-size: clamp(3rem, 10.5vw, 4.5rem);
+      line-height: 0.96;
+    }
+
+    .department-mandate {
+      margin-top: 1.5rem;
+      font-size: 1rem;
+    }
+
+    .department-cta {
+      margin-top: 3.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .departments-intro [data-reveal],
+    .departments-layout,
+    .department-tab {
+      transition: none;
+    }
+
+    .departments-intro.is-reveal-pending:not(.is-revealed) [data-reveal],
+    .departments-layout.is-reveal-pending:not(.is-revealed) {
+      opacity: 1;
+      transform: none;
+    }
+
+    .departments.is-enhanced .department-panel {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,294 @@
+---
+import Container from "../ui/Container.astro";
+import Button from "../ui/Button.astro";
+import Eyebrow from "../ui/Eyebrow.astro";
+import { primaryNavigation } from "../../data/navigation";
+
+interface EditorialImage {
+  src: string;
+  alt: string;
+  srcSet?: string;
+  mobileSrcSet?: string;
+  avifSrcSet?: string;
+  webpSrcSet?: string;
+  sizes?: string;
+}
+
+interface Props {
+  image?: EditorialImage;
+}
+
+const { image } = Astro.props;
+const imageSizes = image?.sizes ?? "(max-width: 48rem) 90vw, (max-width: 90rem) 92vw, 82rem";
+---
+
+<section class="who-we-are" aria-labelledby="who-title">
+  <Container>
+    <div class="who-copy" data-reveal-group>
+      <div class="who-marker" data-reveal>
+        <Eyebrow>02 / WHO WE ARE</Eyebrow>
+      </div>
+
+      <div class="who-content">
+        <h2 id="who-title" data-reveal>
+          <span>More than a ministry. </span>
+          <span>A discipling network.</span>
+        </h2>
+
+        <div class="who-body">
+          <p data-reveal>
+            Huios Transformation Mission (formerly Apostolic Transformation Mission) is an interdenominational discipling network committed to raising mature believers who accurately represent Christ in every generation.
+          </p>
+          <p data-reveal>
+            We believe that transformation is God's method for fulfilling His eternal purpose. Therefore, our emphasis is not merely on church attendance but on discipleship, spiritual formation, leadership multiplication, and apostolic deployment.
+          </p>
+          <p data-reveal>
+            Through biblical teaching, worship, prayer, mentoring, conferences, retreats, missions, and leadership training, we equip believers to become mature sons who influence families, churches, communities, institutions, and nations.
+          </p>
+          <div class="who-cta" data-reveal>
+            <Button href={primaryNavigation[0].href} variant="text">
+              DISCOVER HUIOS <span aria-hidden="true">→</span>
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="who-visual" data-reveal-group>
+      <div class="who-image" data-reveal>
+        {image ? (
+          <picture>
+            {image.mobileSrcSet && <source media="(max-width: 47.999rem)" srcset={image.mobileSrcSet} />}
+            {image.avifSrcSet && <source type="image/avif" srcset={image.avifSrcSet} sizes={imageSizes} />}
+            {image.webpSrcSet && <source type="image/webp" srcset={image.webpSrcSet} sizes={imageSizes} />}
+            <img
+              src={image.src}
+              srcset={image.srcSet}
+              sizes={imageSizes}
+              alt={image.alt}
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+        ) : (
+          <div class="image-placeholder" aria-hidden="true"></div>
+        )}
+      </div>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .who-we-are {
+    padding-block: clamp(5.5rem, 7.5vw, 8rem);
+    background: var(--color-ivory);
+    color: var(--color-ink);
+  }
+
+  .who-marker {
+    margin-bottom: clamp(3rem, 5vw, 5rem);
+  }
+
+  .who-marker :global(.eyebrow) {
+    color: var(--color-earth);
+  }
+
+  .who-content {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: clamp(1rem, 2vw, 2rem);
+    align-items: start;
+  }
+
+  h2 {
+    grid-column: 1 / span 8;
+    min-width: 0;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 5.2vw, 6rem);
+    font-weight: 500;
+    line-height: 0.94;
+    letter-spacing: -0.035em;
+    text-wrap: initial;
+  }
+
+  h2 span {
+    display: block;
+  }
+
+  .who-body {
+    grid-column: 9 / span 4;
+    min-width: 0;
+    max-width: 38rem;
+    font-size: clamp(1rem, 1.25vw, 1.18rem);
+    line-height: 1.75;
+  }
+
+  .who-body p {
+    margin: 0 0 1.45em;
+  }
+
+  .who-cta {
+    margin-top: clamp(2.5rem, 3.5vw, 3.5rem);
+  }
+
+  .who-cta :global(.button--text) {
+    --button-hover-color: var(--color-earth);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+  }
+
+  .who-visual {
+    margin-top: clamp(4.5rem, 6vw, 6.5rem);
+    overflow: hidden;
+  }
+
+  .who-image {
+    width: 100%;
+    aspect-ratio: 16 / 7.5;
+    overflow: hidden;
+    background: var(--color-charcoal);
+  }
+
+  .who-image picture,
+  .who-image img,
+  .image-placeholder {
+    width: 100%;
+    height: 100%;
+  }
+
+  .who-image img {
+    object-fit: cover;
+  }
+
+  /* Temporary tonal surface until client-owned Huios photography is supplied. */
+  .image-placeholder {
+    background: linear-gradient(
+      110deg,
+      color-mix(in srgb, var(--color-charcoal) 88%, var(--color-paper)),
+      color-mix(in srgb, var(--color-charcoal) 58%, var(--color-earth))
+    );
+  }
+
+  .who-copy [data-reveal],
+  .who-image {
+    transition: opacity 680ms cubic-bezier(0.22, 1, 0.36, 1), transform 680ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .who-copy.is-reveal-pending:not(.is-revealed) [data-reveal],
+  .who-visual.is-reveal-pending:not(.is-revealed) .who-image {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  .who-copy h2 {
+    transition-delay: 70ms;
+  }
+
+  .who-body p:nth-child(1) {
+    transition-delay: 130ms;
+  }
+
+  .who-body p:nth-child(2) {
+    transition-delay: 190ms;
+  }
+
+  .who-body p:nth-child(3) {
+    transition-delay: 250ms;
+  }
+
+  .who-cta {
+    transition-delay: 310ms;
+  }
+
+  .who-image picture,
+  .image-placeholder {
+    transition: transform 850ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .who-visual.is-reveal-pending:not(.is-revealed) picture,
+  .who-visual.is-reveal-pending:not(.is-revealed) .image-placeholder {
+    transform: scale(1.04);
+  }
+
+  @media (max-width: 74.999rem) {
+    .who-content {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: clamp(2.75rem, 5vw, 4.5rem);
+    }
+
+    h2,
+    .who-body {
+      grid-column: 1;
+    }
+
+    h2 {
+      font-size: clamp(3.75rem, 7vw, 5.75rem);
+    }
+
+    .who-body {
+      margin-left: min(8vw, 7rem);
+    }
+
+    .who-image {
+      aspect-ratio: 16 / 9;
+    }
+  }
+
+  @media (max-width: 47.999rem) {
+    .who-we-are {
+      padding-block: 5rem 5.5rem;
+    }
+
+    .who-marker {
+      margin-bottom: 2.5rem;
+    }
+
+    .who-content {
+      row-gap: 2.5rem;
+    }
+
+    h2 {
+      font-size: clamp(3.45rem, 12vw, 4.4rem);
+    }
+
+    .who-body {
+      margin-left: 0;
+      font-size: 1rem;
+    }
+
+    .who-body p {
+      margin-bottom: 1.35em;
+    }
+
+    .who-cta {
+      margin-top: 2.25rem;
+    }
+
+    .who-visual {
+      margin-top: 4rem;
+    }
+
+    .who-image {
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .who-copy [data-reveal],
+    .who-image,
+    .who-image picture,
+    .image-placeholder {
+      transition: none;
+    }
+
+    .who-copy.is-reveal-pending:not(.is-revealed) [data-reveal],
+    .who-visual.is-reveal-pending:not(.is-revealed) .who-image,
+    .who-visual.is-reveal-pending:not(.is-revealed) picture,
+    .who-visual.is-reveal-pending:not(.is-revealed) .image-placeholder {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>

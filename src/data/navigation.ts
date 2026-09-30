@@ -13,8 +13,8 @@ export const primaryNavigation = [
   { label: "Our Model", href: "/our-model/" },
   { label: "Ministries", href: "/ministries/" },
   { label: "Programs", href: "/programs/" },
-  { label: "Media", href: "/media" },
-  { label: "Get Involved", href: "/get-involved" },
+  { label: "Media", href: "/media/" },
+  { label: "Get Involved", href: "/get-involved/" },
 ] as const satisfies readonly NavigationLink[];
 
 export const missionLink = {
