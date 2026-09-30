@@ -1,7 +1,7 @@
 ---
 import Container from "../ui/Container.astro";
 import Button from "../ui/Button.astro";
-import { mediaLink, missionLink } from "../../data/navigation";
+import { mediaLink, primaryNavigation } from "../../data/navigation";
 
 interface HeroImage {
   src: string;
@@ -52,8 +52,8 @@ const { image } = Astro.props;
           We exist to see believers transformed into the image of Christ through intentional discipleship, apostolic teaching, prayer, worship, leadership development, and kingdom deployment.
         </p>
         <div class="hero-actions">
-          <Button href={missionLink.href} tone="light">
-            JOIN THE MISSION <span class="action-arrow" aria-hidden="true">→</span>
+          <Button href={primaryNavigation[0].href} tone="light">
+            LEARN MORE <span class="action-arrow" aria-hidden="true">→</span>
           </Button>
           <Button href={mediaLink.href} variant="text">
             WATCH MESSAGES <span class="action-arrow" aria-hidden="true">↗</span>
